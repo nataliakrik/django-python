@@ -4,4 +4,9 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  assetsInclude: ['**/*.PNG', '**/*.png'],  // Add this line
+  alias: {
+    '@api': './src/api.js', 
+    // Add other aliases as needed
+  },
 })

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import api from "../api";
+import { Link } from 'react-router-dom'; 
+import api from "../api"; 
 import Note from '../components/Note'
 import "../styles/Note.css"
 
@@ -25,16 +26,18 @@ function Home(){
 
     const deleteNote = (id) => {
         api
-            .delete('/api/notes/delete/${id}/')
+            .delete(`/api/notes/delete/${id}/`)  // Use backticks here
             .then((res) => {
-                if (res.status === 204) alert("Note deleted!");
-                else alert("Failed to delete.");
-                getNotes();
-            }) 
+                if (res.status === 204) {
+                    alert("Note deleted!");
+                } else {
+                    alert("Failed to delete.");
+                }
+                getNotes();  // Refresh the list of notes after deletion
+            })
             .catch((error) => alert(error));
-
     };
-
+    
     const createNote = (e) =>{
         e.preventDefault();
         api.post("/api/notes/", {content , title}).then((res) =>{
@@ -45,16 +48,25 @@ function Home(){
     };
 
     return <div>
-        <div>
+        <div className="top-bar"> 
+            <a href="./home" className="top-bar-link">Home Page</a>
+            <a href="./Jobs/index.html" className="top-bar-link">Jobs</a>
+            <a href="./Messages/index.html" className="top-bar-link">Messages</a>
+            <a href="./MyNetwork/index.html" className="top-bar-link">My Network</a>
+            <a href="./Notifications/index.html" className="top-bar-link">Notifications</a>
+            <a href="./profile" className="top-bar-link">Profile</a>
+            <a href="./settings" className="top-bar-link">Settings</a>
+        </div>
+        <div className="notes-title">
             <h2>
                 Notes
             </h2>
             {notes.map((note) => <Note note={note} onDelete={deleteNote} key={note.id}/>)}
         </div>
-        <h2>
+        <h2 className="notes-title">
             Create a Note
         </h2>
-        <form onSubmit={createNote}>
+        <form onSubmit={createNote} className="home-container">
             <label htmlFor="title">Title :</label>
             <br />
             <input
@@ -66,7 +78,7 @@ function Home(){
                 value={title}
             />
             <br />
-            <label htmlFor="title">content :</label>
+            <label htmlFor="title" >content :</label>
             <br />
             <textarea 
                 id="content" 
