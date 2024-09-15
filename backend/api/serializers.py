@@ -6,12 +6,19 @@ from .models import Note
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "password", "passwordConfirm", "email"]
+        fields = ["id", "username", "password" , "email"]
         extra_kwargs = {"password": {"write_only": True}}
     
+    def validate(self, data):
+        if User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError("A user with that email already exists")
+        
+        #if data['password'] != data['passwordConfirm']:
+        #    raise serializers.ValidationError("Passwords do not match")
+        
+        return data
 
     def create(self, validated_data):
-        print(validated_data)
         user = User.objects.create_user(**validated_data)
         return user
 
