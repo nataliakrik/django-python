@@ -30,34 +30,47 @@ function Settings() {
   };
 
   return (
-    <div className="settings-container">
-      <h2>Ρυθμίσεις</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Νέο Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Νέος Κωδικός:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-          />
-        </div>
-        <button type="submit">Αποθήκευση Αλλαγών</button>
-      </form>
-      {message && <p>{message}</p>}
+    <div>
+
+      <div className="top-bar"> 
+        <a href="./home" className="top-bar-link">Home Page</a>
+        <a href="./Jobs/index.html" className="top-bar-link">Jobs</a>
+        <a href="./Messages/index.html" className="top-bar-link">Messages</a>
+        <a href="./MyNetwork/index.html" className="top-bar-link">My Network</a>
+        <a href="./Notifications/index.html" className="top-bar-link">Notifications</a>
+        <a href="./profile" className="top-bar-link">Profile</a>
+        <a href="./settings" className="top-bar-link">Settings</a>
+      </div>
+
+      <div className="settings-container">
+        <h2>Ρυθμίσεις</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Νέο Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Νέος Κωδικός:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+            />
+          </div>
+          <button type="submit">Αποθήκευση Αλλαγών</button>
+        </form>
+        {message && <p>{message}</p>}
+      </div>
     </div>
   );
 }
