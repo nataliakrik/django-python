@@ -2,6 +2,7 @@ import React from 'react'
 import { useState } from "react";
 import api from "../api"; // Υποθέτουμε ότι έχεις μια API instance για τα requests
 import "../styles/settings.css"
+import { Link } from 'react-router-dom';
 
 function Settings() {
   const [email, setEmail] = useState("");
@@ -32,14 +33,14 @@ function Settings() {
   return (
     <div>
 
-      <div className="top-bar"> 
-        <a href="./home" className="top-bar-link">Home Page</a>
-        <a href="./Jobs/index.html" className="top-bar-link">Jobs</a>
-        <a href="./Messages/index.html" className="top-bar-link">Messages</a>
-        <a href="./MyNetwork/index.html" className="top-bar-link">My Network</a>
-        <a href="./Notifications/index.html" className="top-bar-link">Notifications</a>
-        <a href="./profile" className="top-bar-link">Profile</a>
-        <a href="./settings" className="top-bar-link">Settings</a>
+      <div className="top-bar">          
+        <Link to ="/home" className="top-bar-link">Home page</Link>
+        <Link to ="/jobs" className="top-bar-link">Jobs</Link>
+        <Link to ="/messages" className="top-bar-link">Messages</Link>
+        <Link to ="/mynetwork" className="top-bar-link">My Network</Link>
+        <Link to ="/notifications" className="top-bar-link">Notifications</Link>
+        <Link to ="/profile" className="top-bar-link">Profile</Link>
+        <Link to ="/settings" className="top-bar-link">Settings</Link>
       </div>
 
       <div className="settings-container">

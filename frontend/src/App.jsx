@@ -6,8 +6,17 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Welcome from "./pages/Welcome_page";
-import PersonalDetails from './pages/Profile/Me';  // Εισαγωγή της νέας σελίδας
 import Settings from "./pages/Settings";
+import Admin_dashboard from "./pages/Admin_dashboard";
+import Jobs from "./pages/Jobs";
+import Messages from "./pages/Messages";
+import MyNetwork from "./pages/MyNetwork";
+import Notifications from "./pages/Notifications";
+import OtherProfile from "./pages/OtherProfile";
+import Me from "./pages/Me";
+
+
+
 
 function Logout() {
   localStorage.clear()
@@ -28,16 +37,25 @@ function App() {
         <Route path="/Welcome" element={<Welcome />} />
         
         {/* Protected route */}
-        <Route
+        {/* <Route
           path="/home"
           element={
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
           }
-        />
-        <Route path="/profile" element={<PersonalDetails />} />
+        /> */}
+
+        <Route path="/admin_dashboard" element={<Admin_dashboard />}/>
+        <Route path="/home" element={<Home />} />
+        <Route path="/jobs" element={<Jobs />}/> 
+        <Route path="/messages" element={<Messages />}/>
+        <Route path="/mynetwork" element={<MyNetwork />}/>
+        <Route path="/notifications" element={<Notifications />}/>
+        <Route path="/otherprofile" element={<OtherProfile />}/>
+        <Route path="/profile" element={<Me />} />
         <Route path="/settings" element={<Settings />} />
+        
         
         {/* Other routes */}
         <Route path="/login" element={<Login />} />
