@@ -3,10 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Admin_dashboard from "./pages/Admin_dashboard"
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Welcome from "./pages/Welcome_page";
-import PersonalDetails from './pages/Profile/Me';  // Εισαγωγή της νέας σελίδας
+import PersonalDetails from './pages/Profile/Me';  
 import Settings from "./pages/Settings";
 
 function Logout() {
@@ -33,6 +34,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        // route for the admin it has to be protected because only admins can access it
+        <Route
+          path="/admin_dashboard"
+          element={
+            <ProtectedRoute>
+              <Admin_dashboard />
             </ProtectedRoute>
           }
         />

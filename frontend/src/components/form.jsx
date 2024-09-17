@@ -21,26 +21,28 @@ function Form({ route, method }) {
         e.preventDefault();
 
         // check here if the passwords match and do not transfer to backend
-        //if (password !== passwordConfirm) {
-        //    alert("Passwords do not match");
-        //    setLoading(false);
-        //    return;
-        //}
+        if (nameText=="Register" && password !== passwordConfirm) {
+            alert("Passwords do not match");
+            setLoading(false);
+            return;
+        }
 
         try {
             const data = isLogin 
             ?{username , password , role} 
             : { email, password, passwordConfirm, username, role };
-
+            
+            // Function to recieve tokens in order to login
             const res = await api.post(route , data);
             if (isLogin) {
+                // setting up the tokens value
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
                 if (role === "admin") {
-                    navigate("/admin-dashboard"); // Redirect to admin dashboard
+                    navigate("/admin_dashboard"); // Redirect to admin dashboard if the user is an admin
                 } else {
-                    navigate("/home"); // Redirect to professional's dashboard
+                    navigate("/home"); // Redirect to home page if user is a professional 
                 }
             } else {
                 navigate("/login");
