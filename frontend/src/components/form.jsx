@@ -12,6 +12,7 @@ function Form({ route, method }) {
     const navigate = useNavigate();
     const [passwordConfirm, setPasswordConfirm] = useState(""); 
     const [email, setEmail] = useState(""); // New field for email
+    const [phone_number , setPhone_number] = useState(""); // New field for phone number
 
     const isLogin = method === "login";
     const nameText = isLogin ? "Login" : "Register";
@@ -30,7 +31,7 @@ function Form({ route, method }) {
         try {
             const data = isLogin 
             ?{username , password , role} 
-            : { email, password, passwordConfirm, username, role };
+            : { email, password, passwordConfirm, username, phone_number, role };
             
             // Function to recieve tokens in order to login {route ="/api/token/" or ="/api/user/register/"}
             const res = await api.post(route , data);
@@ -45,6 +46,9 @@ function Form({ route, method }) {
                     navigate("/home"); // Redirect to home page if user is a professional 
                 }
             } else {
+                ///////////////////////////////////////////
+                console.log("Registration successful:", res.data); // Ensure registration works
+
                 // setting up the tokens value
                 //const new_route ="/api/token/"
                 //const new_data = {username , password , role}
@@ -103,6 +107,13 @@ function Form({ route, method }) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email"
+                    />
+                    <input
+                        className="form-input"
+                        type="phone_number"
+                        value={phone_number}
+                        onChange={(e) => setPhone_number(e.target.value)}
+                        placeholder="Phone Number"
                     />
                 </>
             )}
