@@ -14,7 +14,7 @@ we build access to that route
 if we are unable to access the route or is unauthorized we navigate back to the login 
 */
 
-function ProtectedRoute({ authorized_page }) {
+function ProtectedRoute({ children }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
@@ -71,7 +71,7 @@ function ProtectedRoute({ authorized_page }) {
         return <div>Loading...</div>;
     }
     // if is isAuthorized is true navigate to page 
-    return isAuthorized ? authorized_page : <Navigate to="/login" />;
+    return isAuthorized ? children : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;
