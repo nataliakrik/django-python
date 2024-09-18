@@ -56,9 +56,17 @@ function Home(){
             <Link to ="/notifications" className="top-bar-link">Notifications</Link>
             <Link to ="/profile" className="top-bar-link">Profile</Link>
             <Link to ="/settings" className="top-bar-link">Settings</Link>
-
         </div>
-        <div className="notes-title">
+        <h1>Home</h1>
+
+        {/* i need to fetch from the api:
+        his name, users photo, αρθρα (απο τον ιδιο, απο τους φιλους του, απο likes φιλων) */}
+
+        
+
+
+
+        {/* <div className="notes-title">
             <h2>
                 Notes
             </h2>
@@ -93,7 +101,7 @@ function Home(){
                 type="submit"
                 value="Submit"
             ></input>
-        </form>
+        </form> */}
     </div>;
 }
 

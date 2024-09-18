@@ -11,9 +11,10 @@ function Jobs(){
                     <Link to ="/mynetwork" className="top-bar-link">My Network</Link>
                     <Link to ="/notifications" className="top-bar-link">Notifications</Link>
                     <Link to ="/profile" className="top-bar-link">Profile</Link>
-                    <Link to ="/settings" className="top-bar-link">Settings</Link>
+                    <Link to ="/settings" className="top-bar-link">Settings</Link>        
         </div>
-        <h1>Jobs</h1>        
+        <h1>Jobs</h1>
+                
     </div>
 }
 
