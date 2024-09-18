@@ -1,15 +1,15 @@
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Note
 
-"""
+
 # CUSTOM USER MODEL
 from .models import ExtendedUser
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExtendedUser
-        fields = ['id', 'username', 'email', 'phone_number', 'profile_picture']
+        fields = ['id', 'username', 'email', 'phone_number', 'profile_picture', 'password']
         extra_kwargs = {'password': {'write_only': True}}
     
     # Checks if the email already exists in the data-base
@@ -24,7 +24,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     # When new user : This method is called and it uses "User.objects.create_user" to securely create the user with hashed passwords
     def create(self, validated_data):
+        password = validated_data.pop('password') 
         user = ExtendedUser.objects.create_user(**validated_data)
+        user.set_password(password)  # Hash password
+        user.save()
         return user
 
 """
@@ -50,6 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+"""
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:

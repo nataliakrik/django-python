@@ -53,6 +53,7 @@ function Admin_dashboard() {
                             <th>ID</th>
                             <th>Username</th>
                             <th>Email</th>
+                            <th>Phone number</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +62,7 @@ function Admin_dashboard() {
                                 <td>{user.id}</td>
                                 <td>{user.username}</td>
                                 <td>{user.email}</td>
+                                <td>{user.phone_number}</td>
                             </tr>
                         ))}
                     </tbody>

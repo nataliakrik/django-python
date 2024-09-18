@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 
-"""
+
 # THE EXTENDED USER CHANGES
 from .models import ExtendedUser
 
@@ -20,6 +20,7 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('username', 'email')
 
 admin.site.register(ExtendedUser, CustomUserAdmin)
+
 """
 class CustomUserAdmin(UserAdmin):
     # Customizing the admin interface for users
@@ -30,7 +31,7 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.unregister(User)  # Unregister the default User admin
 admin.site.register(User, CustomUserAdmin)  # Register the custom one
-
+"""
 #admin:
 
 #natalie

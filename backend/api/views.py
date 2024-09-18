@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, NoteSerializer
+#from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .models import Note
 from django.contrib.auth import authenticate
@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-"""
+#"""
 # EXTENDED USER CHANGES
 
 # For new user model
@@ -28,9 +28,10 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = CustomUserSerializer
     permission_classes = [AllowAny]
 
+
 # change the user in the UserListView class too
 
-"""
+#"""
 
 
 
@@ -102,6 +103,8 @@ class NoteDelete(generics.DestroyAPIView):
         user = self.request.user
         return Note.objects.filter(author=user)
 
+
+"""
 # CreateAPIView is used for creating a new object in the database
 # it connects to the user model via the serializer (UserSerializer) and when a POST request is made to this view, 
 # it uses the data passed through the request to create a new user based on the validation rules in the serializer.
@@ -112,7 +115,7 @@ class CreateUserView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 
-
+"""
 
 
 # A list of all the users
@@ -122,6 +125,6 @@ class UserListView(APIView):
 
     def get(self, request):
         # getting all users of the user model 
-        users = User.objects.all().values('id', 'username', 'email')
+        users = ExtendedUser.objects.all().values('id', 'username', 'email' ,'phone_number')
         # sending response back
         return Response(users)

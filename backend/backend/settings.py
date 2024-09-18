@@ -148,4 +148,4 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
 
 # Changing custom user model
-#AUTH_USER_MODEL = 'api.ExtendedUser'
+AUTH_USER_MODEL = "api.ExtendedUser"
