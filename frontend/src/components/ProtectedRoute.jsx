@@ -14,7 +14,7 @@ we build access to that route
 if we are unable to access the route or is unauthorized we navigate back to the login 
 */
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ authorized_page }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
 
     useEffect(() => {
@@ -22,11 +22,15 @@ function ProtectedRoute({ children }) {
     }, [])
 
     const refreshToken = async () => {
+        // gets refresh token from localstorage
         const refreshToken = localStorage.getItem(REFRESH_TOKEN);
         try {
+            // Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
             const res = await api.post("/api/token/refresh/", {
                 refresh: refreshToken,
             });
+            // If it is valid set authorized to true
+            // And save the new access token
             if (res.status === 200) {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
                 setIsAuthorized(true)
@@ -40,15 +44,21 @@ function ProtectedRoute({ children }) {
     };
 
     const auth = async () => {
+        // Get access token from local storage
         const token = localStorage.getItem(ACCESS_TOKEN);
+        // if it doesn't exist the user is not authorized
         if (!token) {
             setIsAuthorized(false);
             return;
         }
+        // If it exist we decode with the jwtDecode function
         const decoded = jwtDecode(token);
+        // Get the expiration date
         const tokenExpiration = decoded.exp;
+        // Get current date
         const now = Date.now() / 1000;
 
+        // Check if the token is expired
         if (tokenExpiration < now) {
             await refreshToken();
         } else {
@@ -59,8 +69,8 @@ function ProtectedRoute({ children }) {
     if (isAuthorized === null) {
         return <div>Loading...</div>;
     }
-
-    return isAuthorized ? children : <Navigate to="/login" />;
+    // if is isAuthorized is true navigate to page 
+    return isAuthorized ? authorized_page : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;
