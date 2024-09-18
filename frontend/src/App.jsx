@@ -8,7 +8,6 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Welcome from "./pages/Welcome_page";
 import Settings from "./pages/Settings";
-import Admin_dashboard from "./pages/Admin_dashboard";
 import Jobs from "./pages/Jobs";
 import Messages from "./pages/Messages";
 import MyNetwork from "./pages/MyNetwork";
