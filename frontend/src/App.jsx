@@ -8,7 +8,6 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Welcome from "./pages/Welcome_page";
 import Settings from "./pages/Settings";
-import Admin_dashboard from "./pages/Admin_dashboard";
 import Jobs from "./pages/Jobs";
 import Messages from "./pages/Messages";
 import MyNetwork from "./pages/MyNetwork";
@@ -38,17 +37,23 @@ function App() {
         <Route path="/Welcome" element={<Welcome />} />
         
         {/* Protected route */}
-        {/* <Route
+        <Route
           path="/home"
           element={
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
           }
-        /> */}
-
-        <Route path="/admin_dashboard" element={<Admin_dashboard />}/>
-        <Route path="/home" element={<Home />} />
+        />
+        // route for the admin it has to be protected because only admins can access it
+        <Route
+          path="/admin_dashboard"
+          element={
+            <ProtectedRoute>
+              <Admin_dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/jobs" element={<Jobs />}/> 
         <Route path="/messages" element={<Messages />}/>
         <Route path="/mynetwork" element={<MyNetwork />}/>
