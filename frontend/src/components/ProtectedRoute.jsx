@@ -60,6 +60,7 @@ function ProtectedRoute({ authorized_page }) {
 
         // Check if the token is expired
         if (tokenExpiration < now) {
+            //call refresh function to refresh the token if possible
             await refreshToken();
         } else {
             setIsAuthorized(true);
