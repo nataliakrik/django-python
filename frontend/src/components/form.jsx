@@ -32,7 +32,7 @@ function Form({ route, method }) {
             ?{username , password , role} 
             : { email, password, passwordConfirm, username, role };
             
-            // Function to recieve tokens in order to login
+            // Function to recieve tokens in order to login {route ="/api/token/" or ="/api/user/register/"}
             const res = await api.post(route , data);
             if (isLogin) {
                 // setting up the tokens value
@@ -45,9 +45,25 @@ function Form({ route, method }) {
                     navigate("/home"); // Redirect to home page if user is a professional 
                 }
             } else {
-                navigate("/login");
+                // setting up the tokens value
+                //const new_route ="/api/token/"
+                //const new_data = {username , password , role}
+
+                // call an api post with logins route and data
+                const new_res = await api.post("/api/token/", { username, password, role});
+
+                // Get tokens from data that register
+                localStorage.setItem(ACCESS_TOKEN, new_res.data.access);
+                localStorage.setItem(REFRESH_TOKEN, new_res.data.refresh);
+
+                if (role === "admin") {
+                    navigate("/admin_dashboard"); // Redirect to admin dashboard if the user is an admin
+                } else {
+                    navigate("/home"); // Redirect to home page if user is a professional 
+                }
             }
         } catch (error) {
+            console.error("Error details:", error.response ? error.response.data : error.message);
             alert("Invalid login credentials. Please try again.");
         } finally {
             setLoading(false);
