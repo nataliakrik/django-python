@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, LoginView, UserListView
+from api.views import CreateUserView, LoginView, UserListView, UsernamesListView , MessagesBetweenUsers , Usename_Photo
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -12,4 +14,12 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/admin/users/', UserListView.as_view(), name='user-list'),
+    path('api/usernames/', UsernamesListView.as_view(), name='username-list'),
+    path('messages/<int:user_id>/', MessagesBetweenUsers.as_view(), name='messages_between_users'),
+    path('api/usernameAndPhoto/', Usename_Photo.as_view(), name='username-photo'),
 ]
+
+
+# Handle media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -149,3 +149,7 @@ CORS_ALLOWS_CREDENTIALS = True
 
 # Changing custom user model
 AUTH_USER_MODEL = "api.ExtendedUser"
+
+# Media settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

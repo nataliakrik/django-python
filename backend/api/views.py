@@ -14,8 +14,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # EXTENDED USER CHANGES
 
 # For new user model
-from .models import ExtendedUser
+from .models import ExtendedUser , Message
 from .serializers import CustomUserSerializer, NoteSerializer
+from rest_framework.decorators import api_view
+from django.db.models import Q
+from django.conf import settings
 
 #this was the create user view for the extended user
 
@@ -128,3 +131,74 @@ class UserListView(APIView):
         users = ExtendedUser.objects.all().values('id', 'username', 'email' ,'phone_number')
         # sending response back
         return Response(users)
+
+# A list of all the users
+class UsernamesListView(APIView):
+    # only admins have access to this class
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # getting all users of the user model 
+        users = ExtendedUser.objects.all().values('id','username')
+        # sending response back
+        return Response(users)
+    
+
+# Return username and photo
+class Usename_Photo(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        # Get username and photo of the authenticated user
+        user_data = ExtendedUser.objects.filter(id=request.user.id).values('id', 'username', 'profile_picture')
+        for user in user_data:
+            if user['profile_picture']:
+                # REturn the full path for the image 
+                user['profile_picture'] = request.build_absolute_uri(settings.MEDIA_URL + user['profile_picture'])
+        # Send back information
+        return Response(user_data)
+
+
+##############################################
+# Send and get messages
+
+class MessagesBetweenUsers(APIView):
+    # Function to get a list if all the messages that were exchanged between logged in user and selected user
+    def get(self, request, user_id):
+
+        try:
+            other_user = ExtendedUser.objects.get(id=user_id)
+        except ExtendedUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # List of all the messages either 
+        # from logged in user that were sent to selected user or 
+        # from selected user that were sent to logged in user
+        # ordered by the time they were created
+        messages = Message.objects.filter(
+            (Q(sender=request.user) & Q(receiver=other_user)) |
+            (Q(sender=other_user) & Q(receiver=request.user))
+        ).order_by('created_at')
+        
+        # Serialize messages and return the full list
+        serialized_messages = [
+            {"sender": msg.sender.username, "receiver": msg.receiver.username, "content": msg.content, "created_at": msg.created_at}
+            for msg in messages
+        ]
+        return Response(serialized_messages, status=status.HTTP_200_OK)
+
+    # Function to create and save a new message from logged in user to the selected user
+    def post(self, request, user_id):
+        # Search for selected user
+        try:
+            receiver = ExtendedUser.objects.get(id=user_id)
+        except ExtendedUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Content of the message
+        content = request.data.get("content")
+        if not content:
+            return Response({"error": "Content cannot be empty"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create new message
+        message = Message.objects.create(sender=request.user, receiver=receiver, content=content)
+        return Response({"message": "Message sent successfully"}, status=status.HTTP_201_CREATED)
