@@ -11,7 +11,21 @@ function Messages(){
                     <Link to ="/profile" className="top-bar-link">Profile</Link>
                     <Link to ="/settings" className="top-bar-link">Settings</Link>
         </div>
-        <h1>Message page</h1>
+        <h1>Message ή Συζητησεις</h1>
+
+        {/* fetch from api:
+        -ονομα και εικονα χρηστων που βρισκονται στη λιστα
+        -μηνυματα ανοικτης συζητησης (επιλεγμενου προφιλ)
+        -(πρωτες λεξεις μηνυματων σε καθε ατομο) */}
+
+        {/* Το front να εμφανιζει:
+        -Μια λιστα (στα αριστερα) με τα profile,
+        με τα ατομα που υπαρχει ηδη συζητηση
+        -Στο κεντρο ανοικτη η συζητηση με το επιλεγμενο ατομο
+        απο τη λιστα */}
+
+        
+
     </div>
 }
 

@@ -11,7 +11,18 @@ function MyNetwork(){
                     <Link to ="/profile" className="top-bar-link">Profile</Link>
                     <Link to ="/settings" className="top-bar-link">Settings</Link>
         </div>
-        <h1>MyNetwork page</h1>
+        <h1>MyNetwork ή Δικτυο</h1>
+
+        {/* fetch from the api:
+        name, sirname, photo, job position, τομεας απασχολησης */}
+
+        {/* το front:
+        -εχει μια search bar
+        -ενα χωρο εμφανιζονται τα φιλικα προφιλ
+        ανα ζευγαρια το ενα κατω απο το αλλο */}
+
+        
+
     </div>
 }
 
