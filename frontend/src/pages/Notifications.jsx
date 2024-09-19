@@ -11,7 +11,20 @@ function Notifications(){
                     <Link to ="/profile" className="top-bar-link">Profile</Link>
                     <Link to ="/settings" className="top-bar-link">Settings</Link>
         </div>
-        <h1>Notifications page</h1>
+        <h1>Notifications ή ειδοποιησεις</h1>
+
+        {/* fetch from api:
+        ολα τα αιτηματα συνδεσης, τα αρθρα που εγιναν like
+        , απο ποιον, τα αρθρα που εγιναν comment, απο ποιον
+        + ποιο ειναι το comment */}
+
+        {/* Το front εκτυπωνει:
+        -(πανω μερος της σελιδας) 
+        τα αιτηματα συνδεσης αλλων χρηστων+συνδεσμοι για προφιλ
+        -(κατω μερος της σελιδας)
+        likes, comments  σε αρθρα */}
+
+
     </div>
 }
 

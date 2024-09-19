@@ -50,6 +50,14 @@ function MyNetwork(){
                     <Link to ="/profile" className="top-bar-link">Profile</Link>
                     <Link to ="/settings" className="top-bar-link">Settings</Link>
         </div>
+        
+        {/* fetch from the api:
+        name, sirname, photo, job position, τομεας απασχολησης */}
+
+        {/* το front:
+        -εχει μια search bar
+        -ενα χωρο εμφανιζονται τα φιλικα προφιλ
+        ανα ζευγαρια το ενα κατω απο το αλλο */}
         <h1>MyNetwork page</h1>
             <ul>
                 {users.map(user => (
