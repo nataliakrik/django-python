@@ -12,8 +12,8 @@ function Form({ route, method }) {
     const navigate = useNavigate();
     const [passwordConfirm, setPasswordConfirm] = useState(""); 
     const [email, setEmail] = useState(""); // New field for email
-    const [phone_number , setPhone_number] = useState(""); // New field for phone number
-    const [img, setImg] = useState(""); // Picture
+    const [phone_number, setPhone_number] = useState(""); // New field for phone number
+    const [img, setImg] = useState(null); // Picture
 
     const isLogin = method === "login";
     const nameText = isLogin ? "Login" : "Register";
@@ -22,22 +22,44 @@ function Form({ route, method }) {
         setLoading(true);
         e.preventDefault();
 
-        // check here if the passwords match and do not transfer to backend
-        if (nameText=="Register" && password !== passwordConfirm) {
+        // Check if the passwords match and do not transfer to backend
+        if (nameText === "Register" && password !== passwordConfirm) {
             alert("Passwords do not match");
             setLoading(false);
             return;
         }
 
         try {
-            const data = isLogin 
-            ?{username , password , role} 
-            : { email, password, passwordConfirm, username, phone_number, role , img};
-            
-            // Function to recieve tokens in order to login {route ="/api/token/" or ="/api/user/register/"}
-            const res = await api.post(route , data);
+            // storing the data in a formdata helps with the file for uploading correctly
+            //  it correctly packages the file's data as binary and  allows the server to process it like an upload
+            const formData = new FormData();
+            if (!isLogin) {
+                // add the data for registration
+                formData.append("username", username);
+                formData.append("password", password);
+                formData.append("email", email);
+                formData.append("phone_number", phone_number);
+                formData.append("role", role);
+                if (img) {
+                    // add the photo
+                    formData.append("profile_picture", img); 
+                }
+            } else {
+                // data for login
+                formData.append("username", username);
+                formData.append("password", password);
+                formData.append("role", role);
+            }
+
+            // function to receive tokens in order to login {route ="/api/token/" or ="/api/user/register/"}
+            const res = await api.post(route, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
             if (isLogin) {
-                // setting up the tokens value
+                // Setting up the tokens value
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
@@ -47,15 +69,10 @@ function Form({ route, method }) {
                     navigate("/home"); // Redirect to home page if user is a professional 
                 }
             } else {
-                ///////////////////////////////////////////
                 console.log("Registration successful:", res.data); // Ensure registration works
 
-                // setting up the tokens value
-                //const new_route ="/api/token/"
-                //const new_data = {username , password , role}
-
-                // call an api post with logins route and data
-                const new_res = await api.post("/api/token/", { username, password, role});
+                // Call an API post with logins route and data to get tokens
+                const new_res = await api.post("/api/token/", { username, password, role });
 
                 // Get tokens from data that register
                 localStorage.setItem(ACCESS_TOKEN, new_res.data.access);
@@ -93,7 +110,7 @@ function Form({ route, method }) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
             />
-            {!isLogin &&(
+            {!isLogin && (
                 <>
                     <input
                         className="form-input"
@@ -111,7 +128,7 @@ function Form({ route, method }) {
                     />
                     <input
                         className="form-input"
-                        type="phone_number"
+                        type="tel"
                         value={phone_number}
                         onChange={(e) => setPhone_number(e.target.value)}
                         placeholder="Phone Number"
@@ -120,8 +137,7 @@ function Form({ route, method }) {
                         className="form-input"
                         type="file"
                         accept="image/*"
-                        value={img}
-                        onChange={(e) => setImg(e.target.value)}
+                        onChange={(e) => setImg(e.target.files[0])} 
                         placeholder="Your Image"
                     />
                 </>
