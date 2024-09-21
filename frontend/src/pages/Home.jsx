@@ -123,6 +123,24 @@ function Home(){
             </ul>
         </div>
 
+        <Link to="/mynetwork">Connections <br />Grow your network</Link> <br /> <br />
+
+        <Link to="/postarticle">Post a article</Link>
+
+        {/* i print the article here */}
+        {/* the variable articles is an array with all the 
+        articles that will be printed
+        (they have been fetched from the backend) */}
+        
+        {/* -every article is an object with properties:
+        text, file (εικονα ή βιντεο), user (χρειαζομαστε το ονομα του,
+        εικονα του και την επαγγελματική εμπειρία)*/}
+
+
+        {/* articles.forEach(article => {
+            article
+        }); */}
+
 
 
         {/* <div className="notes-title">
