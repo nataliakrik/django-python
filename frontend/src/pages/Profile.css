@@ -30,3 +30,18 @@ button {
 button:hover {
     background-color: #45a049;
 }
+
+.container1 {
+    display: flex;
+    width: 800px;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(130, 202, 178);
+}
+
+.header_container{
+    width: 800px;
+    height: 90px;
+    text-align: center;
+}

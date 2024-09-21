@@ -13,6 +13,7 @@ function Form({ route, method }) {
     const [passwordConfirm, setPasswordConfirm] = useState(""); 
     const [email, setEmail] = useState(""); // New field for email
     const [phone_number , setPhone_number] = useState(""); // New field for phone number
+    const [img, setImg] = useState(""); // Picture
 
     const isLogin = method === "login";
     const nameText = isLogin ? "Login" : "Register";
@@ -31,7 +32,7 @@ function Form({ route, method }) {
         try {
             const data = isLogin 
             ?{username , password , role} 
-            : { email, password, passwordConfirm, username, phone_number, role };
+            : { email, password, passwordConfirm, username, phone_number, role , img};
             
             // Function to recieve tokens in order to login {route ="/api/token/" or ="/api/user/register/"}
             const res = await api.post(route , data);
@@ -114,6 +115,14 @@ function Form({ route, method }) {
                         value={phone_number}
                         onChange={(e) => setPhone_number(e.target.value)}
                         placeholder="Phone Number"
+                    />
+                    <input 
+                        className="form-input"
+                        type="file"
+                        accept="image/*"
+                        value={img}
+                        onChange={(e) => setImg(e.target.value)}
+                        placeholder="Your Image"
                     />
                 </>
             )}

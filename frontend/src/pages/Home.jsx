@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from "../api"; 
 //import Note from '../components/Note'
 import "../styles/Note.css"
+import "./Profile.css"
 
 function Home(){
 
@@ -93,7 +94,7 @@ function Home(){
             <Link to ="/profile" className="top-bar-link">Profile</Link>
             <Link to ="/settings" className="top-bar-link">Settings</Link>
         </div>
-        <h1>Home</h1>
+        <h2>Home</h2>
 
         {/* i need to fetch from the api:
         his name, users photo, αρθρα (απο τον ιδιο,
@@ -102,20 +103,21 @@ function Home(){
         {/* -πλαισιο με το ονομα + link στο προφιλ του χρηστη
         , link για το δικτυο του
         -απο κατω στο κεντρο εχει αρθρα */}
-        <div className="profile">
-            <ul>
+        <div className="container1">
+            <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
                 {users.map(user => (
                     <li key={user.id}>
-                        user details:
+                        {/* user details: */}
                         <br />
-                        profile picture : 
+                        {/* profile picture :  */}
                         <img
                             src={user.profile_picture}
                             alt={user.username}
                             style={{ width: '100px', height: '100px' }}
                             />
-                        <br />
-                        <span style={{ color: 'black' }}>username: {user.username}</span>
+                        <br /> <br />
+                        <Link to="/profile">{user.username}</Link>
+                        {/* <span style={{ color: 'black' }}> {user.username}</span> */}
                   </li>
                 ))}
             </ul>
