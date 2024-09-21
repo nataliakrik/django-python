@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, LoginView, UserListView, UsernamesListView , MessagesBetweenUsers , Usename_Photo
+from api.views import CreateUserView, LoginView, UserListView, UsernamesListView , MessagesBetweenUsers , Usename_Photo , ConnectionView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/usernames/', UsernamesListView.as_view(), name='username-list'),
     path('messages/<int:user_id>/', MessagesBetweenUsers.as_view(), name='messages_between_users'),
     path('api/usernameAndPhoto/', Usename_Photo.as_view(), name='username-photo'),
+    path('api/connections/<int:user_id>/', ConnectionView.as_view()), 
 ]
 
 

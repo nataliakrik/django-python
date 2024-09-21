@@ -10,8 +10,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-#"""
-# EXTENDED USER CHANGES
 
 # For new user model
 from .models import ExtendedUser , Message
@@ -20,7 +18,6 @@ from rest_framework.decorators import api_view
 from django.db.models import Q
 from django.conf import settings
 
-#this was the create user view for the extended user
 
 # CreateAPIView is used for creating a new object in the database
 # it connects to the user model via the serializer (UserSerializer) and when a POST request is made to this view, 
@@ -30,11 +27,6 @@ class CreateUserView(generics.CreateAPIView):
     queryset = ExtendedUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [AllowAny]
-
-
-# change the user in the UserListView class too
-
-#"""
 
 
 
@@ -107,18 +99,6 @@ class NoteDelete(generics.DestroyAPIView):
         return Note.objects.filter(author=user)
 
 
-"""
-# CreateAPIView is used for creating a new object in the database
-# it connects to the user model via the serializer (UserSerializer) and when a POST request is made to this view, 
-# it uses the data passed through the request to create a new user based on the validation rules in the serializer.
-class CreateUserView(generics.CreateAPIView):
-    # retrieves all instances of the User model from the database and returns a queryset containing all users.
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
-
-
-"""
 
 
 # A list of all the users
@@ -149,7 +129,7 @@ class Usename_Photo(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         # Get username and photo of the authenticated user
-        user_data = ExtendedUser.objects.filter(id=request.user.id).values('id', 'username', 'profile_picture')
+        user_data = ExtendedUser.objects.filter(id=request.user.id).values('id', 'username', 'profile_picture','email', 'phone_number')
         for user in user_data:
             if user['profile_picture']:
                 # REturn the full path for the image 
@@ -162,6 +142,7 @@ class Usename_Photo(APIView):
 # Send and get messages
 
 class MessagesBetweenUsers(APIView):
+    permission_classes = [IsAuthenticated]
     # Function to get a list if all the messages that were exchanged between logged in user and selected user
     def get(self, request, user_id):
 
@@ -202,3 +183,73 @@ class MessagesBetweenUsers(APIView):
         # Create new message
         message = Message.objects.create(sender=request.user, receiver=receiver, content=content)
         return Response({"message": "Message sent successfully"}, status=status.HTTP_201_CREATED)
+    
+
+
+# Connections between users
+
+class ConnectionView(APIView):
+    permission_classes = [IsAuthenticated]
+    # View follows list of user with the user_id
+    def get(self, request, user_id):
+        try:
+            # Get user inforamtion of the user with id = user_id
+            user = ExtendedUser.objects.get(id=user_id)
+            # Get all the connected users
+            follows = user.follows.all()
+            # serialize the list to return
+            serialized_follows = [{"id": conn.id, "username": conn.username, "email": conn.email, "phone_number": conn.phone_number} for conn in follows]
+
+            followers = user.follower.all()
+            serialized_followers = [{"id": conn.id, "username": conn.username, "email": conn.email, "phone_number": conn.phone_number} for conn in followers]
+            # Return the data as a dictionary
+            response = {
+                "following": serialized_follows,
+                "followers": serialized_followers
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        except ExtendedUser.DoesNotExist:
+            # if the try failed there are no users being followed by the user_id
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Add a new following to user_id
+    # the connection is going to be one way like a follow
+    # user_id following connection_id
+    def post(self, request, user_id):
+        try:
+            # get information about the user_id
+            user = ExtendedUser.objects.get(id=user_id)
+            # get the id of the user that the user_id is trying to connect with
+            connection_id = request.data.get("connection_id")
+            # get the information of that user
+            connection = ExtendedUser.objects.get(id=connection_id)
+            # add the information of the connected user to the list of connected users
+            user.follows.add(connection)
+            # add the follower to the connection_id users followers list
+            connection.follower.add(user)
+            # return a message that the connection was successful
+            return Response({"message": "Connection added successfully"}, status=status.HTTP_201_CREATED)
+        except ExtendedUser.DoesNotExist:
+            # in case the try did not go through with the connection
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Unfollow a user
+    def delete(self, request, user_id):
+        try:
+            # get information about the user_id
+            user = ExtendedUser.objects.get(id=user_id)
+            # get the id of the user that the user_id is trying to unfollow
+            connection_ID = request.query_params.get("connection_id")
+        
+            # get the information of that user
+            connection = ExtendedUser.objects.get(id=connection_ID)
+            if connection in user.follows.all():
+                user.follows.remove(connection)
+                connection.follower.remove(user)
+            
+            
+            return Response({"message": "Unfollow was successfull"}, status=status.HTTP_201_CREATED)
+        except ExtendedUser.DoesNotExist:
+            # in case the try did not go through with the connection
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+

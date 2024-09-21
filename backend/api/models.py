@@ -13,8 +13,12 @@ class ExtendedUser(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     # adding picture to the user
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    # A list of all the users that current user follows
+    follows = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
+    # A list of all the users that are following current user
+    follower = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
 
-# chang the line in the notes class to this
+# change the line in the notes class to this
 # author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes")
 
 #"""
