@@ -369,3 +369,6 @@ class Likes_on_Articles(APIView):
         except ExtendedUser.DoesNotExist:
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+# commit on git
