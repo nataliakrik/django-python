@@ -4,6 +4,8 @@ import api from "../api";
 //import Note from '../components/Note'
 import "../styles/Note.css"
 import "./Profile.css"
+import red_heart from "../assets/red_heart.png"
+import black_heart from "../assets/black_heart.png"
 
 function Home(){
 
@@ -12,6 +14,7 @@ function Home(){
     const [error, setError] = useState(null);  // State to handle errors
     const token = localStorage.getItem('access');  // Assume token is stored in localStorage after login
     const [articles, setArticles] = useState([])
+    const [likes, setLikes] = useState([])  // An array of the likes
 
     useEffect(() => {
         const fetch_Username_photo = async () => {
@@ -38,14 +41,14 @@ function Home(){
     //////////////////////////////////////////////////////////
     useEffect(() => {
         if (user && user.id) { 
-            //console.log(user)
+            console.log(user)
             const fetchArticles = async () => {
                 try {
                     const response = await api.get(`api/articles/${user.id}/`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     setArticles(response.data);
-                    console.log(response)
+                    console.log(response.data)
                 } catch (error) {
                     console.error('Error fetching articles:', error);
                 }
@@ -57,7 +60,7 @@ function Home(){
 
     //////////////////////////////////////////////////////////
     // Delete article by author
-
+    
     const deleteArticle = async (title) =>{
         console.log(title)
         try {
@@ -89,7 +92,22 @@ function Home(){
             }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log(response)
+            setLikes(response.data)
+            console.log(response.data)
+            window.location.reload();
+        }catch{
+            console.error('Error when liking article:', error);
+        }
+    }
+    const unlikeArticle = async (title) =>{
+        try {
+            const response = await api.delete(`api/articles/likes/${user.id}/`, {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { article_title: title }
+            });
+            setLikes(response.data)
+            console.log(likes)
+            window.location.reload();
         }catch{
             console.error('Error when liking article:', error);
         }
@@ -98,6 +116,13 @@ function Home(){
     const handleLikes = (title) =>{
         if (title){
             likeArticle(title)
+        }else{
+            console.error('no title')
+        }
+    }
+    const handleUnLike = (title) =>{
+        if (title){
+            unlikeArticle(title)
         }else{
             console.error('no title')
         }
@@ -153,9 +178,21 @@ function Home(){
                 {articles.length > 0 ? (
                     articles.map(article => (
                         <div className="grid-item" key={article.title}>
+                            {!(article.image === NaN) &&(    
+                                <img
+                                    src={article.image}
+                                    alt={article.title}
+                                    style={{ width: '100px', height: '100px' }}
+                                    />
+                            )}
                             <h3>{article.title}</h3>
-                            <p>{article.content}</p>
-                            <button onClick={() => handleLikes(article.title)}>Like</button>
+                            <p>{article.likes.length} likes</p>
+                            {article.likes.some(like =>like.id === user.id)?(
+                                <button onClick={() => handleUnLike(article.title)}><img src={red_heart} alt="Logo" /></button>
+                            ):(
+                                <button onClick={() => handleLikes(article.title)}><img src={black_heart} alt="Logo" /></button>
+                            )
+                            }
                             <button onClick={() => handleDelete(article.title)}>Delete</button>
                         </div>
                     ))

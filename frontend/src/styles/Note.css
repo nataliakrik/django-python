@@ -143,8 +143,37 @@
     color: #000000;
     background-color: #ffffff;
   }
-  
+  .grid-item {
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    height: max-content;
+    padding: 25px;
+  }
 
+  .grid-item h3{
+    margin: 20px;
+    padding: 10px;
+
+  }
+  .grid-item button {
+    background-color: #ffffff;
+    color: #494949;
+    width: fit-content;
+    margin: 15px;
+
+  }
+
+  .grid-item button:hover {
+    background-color: #f7f7f7;
+    
+  }
+
+  img {
+    width: 25px;
+    height: 25px;
+  }
   
   .profile {
     color: #000000;

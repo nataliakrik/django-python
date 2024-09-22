@@ -38,7 +38,7 @@ function PostArticle() {
         const formData = new FormData();
         formData.append("title", title);
         formData.append("content", content);
-        formData.append("photo", photo);
+        formData.append("image", photo);
         formData.append("public", publicArticle);
         console.log(user)
         console.log(formData)

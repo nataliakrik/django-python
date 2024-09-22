@@ -262,14 +262,15 @@ class Articles(APIView):
         try:
             # Get all articles
             articles = Article.objects.all()
-            
             # serialize the list to return
             serialized_Articles = [
             {
                 "title": article.title, 
                 "content": article.content, 
                 "created_at": article.created_at, 
-                "author": article.author.username  # Access author's username
+                "author": article.author.username,  # Access author's username
+                "image": request.build_absolute_uri(article.image.url)  if article.image else None,
+                "likes": [ {"id": like.id, "username": like.username, } for like in article.likes.all() ]
             } 
             for article in articles]   
             # Return the data as a dictionary
@@ -277,6 +278,9 @@ class Articles(APIView):
             return Response(serialized_Articles, status=status.HTTP_200_OK)
         except Article.DoesNotExist:
             # if the try failed there are no users being followed by the user_id
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        except ExtendedUser.DoesNotExist:
+            # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
     # creating a new article    
@@ -286,7 +290,7 @@ class Articles(APIView):
         title = request.data.get("title")
         content = request.data.get("content")
         # if there is a photo save it
-        photo = request.data.get("photo")
+        photo = request.data.get("image")
         # if it is not public its private
         public = request.data.get("public")
         # Convert string to boolean if necessary
@@ -347,8 +351,13 @@ class Likes_on_Articles(APIView):
             user.liked_articles.add(article)
             
             article.likes.add(user)
-
-            return Response({"article": "liked article"}, status=status.HTTP_200_OK)
+            likes_list = article.likes.all()
+            serialized_Likes = [
+            {
+                "id": like.id, 
+                "username": like.username, 
+            } for like in likes_list ]
+            return Response(serialized_Likes, status=status.HTTP_200_OK)
         except ExtendedUser.DoesNotExist:
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -364,8 +373,13 @@ class Likes_on_Articles(APIView):
             user.liked_articles.remove(article)
             
             article.likes.remove(user)
-
-            return Response({"article": "unliked article"}, status=status.HTTP_200_OK)
+            likes_list = article.likes.all()
+            serialized_Likes = [
+            {
+                "id": like.id, 
+                "username": like.username, 
+            } for like in likes_list ]
+            return Response(serialized_Likes, status=status.HTTP_200_OK)
         except ExtendedUser.DoesNotExist:
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
