@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # For new user model
-from .models import ExtendedUser , Message
+from .models import ExtendedUser , Message , Article
 from .serializers import CustomUserSerializer, NoteSerializer
 from rest_framework.decorators import api_view
 from django.db.models import Q
@@ -125,11 +125,11 @@ class UsernamesListView(APIView):
     
 
 # Return username and photo
-class Usename_Photo(APIView):
+class UserInfo(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         # Get username and photo of the authenticated user
-        user_data = ExtendedUser.objects.filter(id=request.user.id).values('id', 'username', 'profile_picture','email', 'phone_number')
+        user_data = ExtendedUser.objects.filter(id=request.user.id).values('id', 'username', 'profile_picture','email', 'phone_number', 'my_articles')
         for user in user_data:
             if user['profile_picture']:
                 # REturn the full path for the image 
@@ -253,3 +253,119 @@ class ConnectionView(APIView):
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
+class Articles(APIView):
+    # Everyone who is authenticated has access
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            # Get all articles
+            articles = Article.objects.all()
+            
+            # serialize the list to return
+            serialized_Articles = [
+            {
+                "title": article.title, 
+                "content": article.content, 
+                "created_at": article.created_at, 
+                "author": article.author.username  # Access author's username
+            } 
+            for article in articles]   
+            # Return the data as a dictionary
+            # response = serialized_Articles
+            return Response(serialized_Articles, status=status.HTTP_200_OK)
+        except Article.DoesNotExist:
+            # if the try failed there are no users being followed by the user_id
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # creating a new article    
+    def post(self, request, user_id):
+        # data from request will have object title , object content and object photo , 
+        author = ExtendedUser.objects.get(id=user_id)
+        title = request.data.get("title")
+        content = request.data.get("content")
+        # if there is a photo save it
+        photo = request.data.get("photo")
+        # if it is not public its private
+        public = request.data.get("public")
+        # Convert string to boolean if necessary
+        public = request.data.get("public")
+        if public in ['true', 'True', '1']:
+            public = True
+        elif public in ['false', 'False', '0']:
+            public = False
+        else:
+            public = True  # Default value if not specified
+
+        if photo :
+            article = Article.objects.create(title=title, content=content, author=author, image=photo, public=public)
+        else:
+            article = Article.objects.create(title=title, content=content, author=author, public=public)
+        author.my_articles.add(article)
+        
+        return Response({"article": "Article was created successfully"}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, user_id):
+        try:
+            # get information about the user_id
+            user = ExtendedUser.objects.get(id=user_id)
+            # get the id of the user that the user_id is trying to unfollow
+            article_title = request.query_params.get("article_title")
+        
+            # get the information of that user
+            article = Article.objects.get(title=article_title)
+
+            if user == article.author:
+            # If the user is the author, delete the article
+                article.delete()
+
+                return Response({"message": "Article was deleted"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "User is not the author of the article"}, status=status.HTTP_403_FORBIDDEN)
+
+        except ExtendedUser.DoesNotExist:
+            # if the user is not found
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        except Article.DoesNotExist:
+            # if the article is not found
+            return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class Likes_on_Articles(APIView):
+    permission_classes=[IsAuthenticated]
+    # when liking an article
+    def post(self , request , user_id):
+        try:
+            user = ExtendedUser.objects.get(id=user_id)
+
+            article_title = request.data.get("article_title")
+
+            article = Article.objects.get(title=article_title)
+
+            user.liked_articles.add(article)
+            
+            article.likes.add(user)
+
+            return Response({"article": "liked article"}, status=status.HTTP_200_OK)
+        except ExtendedUser.DoesNotExist:
+            # in case the try did not go through with the connection
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self , request, user_id):
+        try:
+            user = ExtendedUser.objects.get(id=user_id)
+
+            article_title = request.query_params.get("article_title")
+
+            article = Article.objects.get(title=article_title)
+
+            user.liked_articles.remove(article)
+            
+            article.likes.remove(user)
+
+            return Response({"article": "unliked article"}, status=status.HTTP_200_OK)
+        except ExtendedUser.DoesNotExist:
+            # in case the try did not go through with the connection
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)

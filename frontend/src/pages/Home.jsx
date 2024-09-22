@@ -7,20 +7,21 @@ import "./Profile.css"
 
 function Home(){
 
-    const [users, setUsers] = useState([]);  // Initialize users as an empty array
+    const [user, setUser] = useState(null);  // Initialize users as an empty array
     const [loading, setLoading] = useState(true);  // State to handle loading
     const [error, setError] = useState(null);  // State to handle errors
     const token = localStorage.getItem('access');  // Assume token is stored in localStorage after login
+    const [articles, setArticles] = useState([])
 
     useEffect(() => {
         const fetch_Username_photo = async () => {
             try {
-                // Calling api.get with 'api/usernameAndPhoto/' path and the token authorization to gain access to the username and photo
+                // calling api.get with 'api/usernameAndPhoto/' path and the token authorization to gain access to the id of the current user and send it to the article
                 const response = await api.get('api/usernameAndPhoto/', {headers: {Authorization: `Bearer ${token}`,},});
 
-                // Saving the response data
-                const usersData = response.data;
-                setUsers(usersData);
+                // saving the response data
+                const usersData = response.data[0];
+                setUser(usersData);
                 setLoading(false);  // Stop loading
             } catch (error) {
                 console.error('Error fetching users:', error);  // Log error
@@ -32,57 +33,84 @@ function Home(){
         fetch_Username_photo();  // Call the function 
         
     }, [token]);
-    
-    // Display a loading message if data is still being fetched
+
+    // get list of articles
+    //////////////////////////////////////////////////////////
+    useEffect(() => {
+        if (user && user.id) { 
+            //console.log(user)
+            const fetchArticles = async () => {
+                try {
+                    const response = await api.get(`api/articles/${user.id}/`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    setArticles(response.data);
+                    console.log(response)
+                } catch (error) {
+                    console.error('Error fetching articles:', error);
+                }
+            };
+            fetchArticles();
+        }
+    }, [token, user]);
+
+
+    //////////////////////////////////////////////////////////
+    // Delete article by author
+
+    const deleteArticle = async (title) =>{
+        console.log(title)
+        try {
+            const response = await api.delete(`api/articles/${user.id}/`, {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { article_title: title }
+            });
+            console.log(response)
+        }catch{
+            console.error('Error when deleting article:', error);
+        }
+    }
+
+    const handleDelete = (title) => {
+        if(title){
+            deleteArticle(title)
+        }else {
+            console.error('no title')
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    // liking articles
+
+    const likeArticle = async (title) =>{
+        try {
+            const response = await api.post(`api/articles/likes/${user.id}/`, {
+                article_title: title
+            }, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            console.log(response)
+        }catch{
+            console.error('Error when liking article:', error);
+        }
+    }
+
+    const handleLikes = (title) =>{
+        if (title){
+            likeArticle(title)
+        }else{
+            console.error('no title')
+        }
+    }
+    // display a loading message if data is still being fetched
     if (loading) {
         return <div>Loading...</div>;
     }
 
-    // Display an error message if there was an issue fetching data
+    // display an error message if there was an issue fetching data
     if (error) {
         return <div>Error: {error}</div>;
     }
-
-    /*
-    useEffect(() => {
-        getNotes();
-    }, [])
-
-    const getNotes = () =>{
-        api
-            .get("/api/notes/")
-            .then((res) => res.data)
-            .then((data) => {
-                setNotes(data); 
-                console.log(data)
-            })
-            .catch((err) => alert(err));
-    };
-
-    const deleteNote = (id) => {
-        api
-            .delete(`/api/notes/delete/${id}/`)  // Use backticks here
-            .then((res) => {
-                if (res.status === 204) {
-                    alert("Note deleted!");
-                } else {
-                    alert("Failed to delete.");
-                }
-                getNotes();  // Refresh the list of notes after deletion
-            })
-            .catch((error) => alert(error));
-    };
-    
-    const createNote = (e) =>{
-        e.preventDefault();
-        api.post("/api/notes/", {content , title}).then((res) =>{
-            if (res.status === 201) alert("Noted")
-            else alert("Failed to create note.")
-            getNotes();
-        }).catch((err) => alert(err));
-    };
-
-    */
     
     return <div className="home">
         <div className="top-bar"> 
@@ -96,6 +124,57 @@ function Home(){
         </div>
         <h2>Home</h2>
 
+        <div className="home-container">
+            
+            <div className="left-container">
+                <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+                    {user && (
+                        <li key={user.id}>
+                            {/* user details: */}
+                            <br />
+                            {/* profile picture :  */}
+                            <img
+                                src={user.profile_picture}
+                                alt={user.username}
+                                style={{ width: '100px', height: '100px' }}
+                                />
+                            <br /> <br />
+                            <Link to="/profile">{user.username}</Link>
+                            {/* <span style={{ color: 'black' }}> {user.username}</span> */}
+                    </li>
+                    )}
+                </ul>
+                <Link to="/mynetwork">Connections <br />Grow your network</Link> <br /> <br />
+
+                <Link to="/postarticle">Post a article</Link>
+            </div>
+            <div className="right-container">
+                <h1>Articles</h1>
+                {articles.length > 0 ? (
+                    articles.map(article => (
+                        <div className="grid-item" key={article.title}>
+                            <h3>{article.title}</h3>
+                            <p>{article.content}</p>
+                            <button onClick={() => handleLikes(article.title)}>Like</button>
+                            <button onClick={() => handleDelete(article.title)}>Delete</button>
+                        </div>
+                    ))
+                ) : (
+                    <p>No articles found</p>
+                )}
+
+            </div>
+        </div>
+
+
+
+    </div>;
+}
+
+export default Home
+
+
+
         {/* i need to fetch from the api:
         his name, users photo, αρθρα (απο τον ιδιο,
         απο τους φιλους του, απο likes φιλων) */}
@@ -103,29 +182,6 @@ function Home(){
         {/* -πλαισιο με το ονομα + link στο προφιλ του χρηστη
         , link για το δικτυο του
         -απο κατω στο κεντρο εχει αρθρα */}
-        <div className="container1">
-            <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
-                {users.map(user => (
-                    <li key={user.id}>
-                        {/* user details: */}
-                        <br />
-                        {/* profile picture :  */}
-                        <img
-                            src={user.profile_picture}
-                            alt={user.username}
-                            style={{ width: '100px', height: '100px' }}
-                            />
-                        <br /> <br />
-                        <Link to="/profile">{user.username}</Link>
-                        {/* <span style={{ color: 'black' }}> {user.username}</span> */}
-                  </li>
-                ))}
-            </ul>
-        </div>
-
-        <Link to="/mynetwork">Connections <br />Grow your network</Link> <br /> <br />
-
-        <Link to="/postarticle">Post a article</Link>
 
         {/* i print the article here */}
         {/* the variable articles is an array with all the 
@@ -179,7 +235,45 @@ function Home(){
                 value="Submit"
             ></input>
         </form> */}
-    </div>;
-}
 
-export default Home
+
+         /*
+    useEffect(() => {
+        getNotes();
+    }, [])
+
+    const getNotes = () =>{
+        api
+            .get("/api/notes/")
+            .then((res) => res.data)
+            .then((data) => {
+                setNotes(data); 
+                console.log(data)
+            })
+            .catch((err) => alert(err));
+    };
+
+    const deleteNote = (id) => {
+        api
+            .delete(`/api/notes/delete/${id}/`)  // Use backticks here
+            .then((res) => {
+                if (res.status === 204) {
+                    alert("Note deleted!");
+                } else {
+                    alert("Failed to delete.");
+                }
+                getNotes();  // Refresh the list of notes after deletion
+            })
+            .catch((error) => alert(error));
+    };
+    
+    const createNote = (e) =>{
+        e.preventDefault();
+        api.post("/api/notes/", {content , title}).then((res) =>{
+            if (res.status === 201) alert("Noted")
+            else alert("Failed to create note.")
+            getNotes();
+        }).catch((err) => alert(err));
+    };
+
+    */
