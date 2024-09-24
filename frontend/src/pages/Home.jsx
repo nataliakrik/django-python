@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from 'react-router-dom'; 
+import { Link, Navigate } from 'react-router-dom'; 
 import api from "../api"; 
 //import Note from '../components/Note'
 import "../styles/Note.css"
@@ -37,7 +37,7 @@ function Home(){
         
     }, [token]);
 
-    // get list of articles
+    // get list of articles if i pass an id i just get an article back if not i get the full list
     //////////////////////////////////////////////////////////
     useEffect(() => {
         if (user && user.id) { 
@@ -48,7 +48,7 @@ function Home(){
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     setArticles(response.data);
-                    console.log(response.data)
+                    //console.log(response.data)
                 } catch (error) {
                     console.error('Error fetching articles:', error);
                 }
@@ -61,12 +61,12 @@ function Home(){
     //////////////////////////////////////////////////////////
     // Delete article by author
     
-    const deleteArticle = async (title) =>{
-        console.log(title)
+    const deleteArticle = async (id) =>{
+        console.log(id)
         try {
             const response = await api.delete(`api/articles/${user.id}/`, {
                 headers: { Authorization: `Bearer ${token}` },
-                params: { article_title: title }
+                params: { article_id: id }
             });
             console.log(response)
         }catch{
@@ -74,13 +74,15 @@ function Home(){
         }
     }
 
-    const handleDelete = (title) => {
-        if(title){
-            deleteArticle(title)
+    const handleDelete = (id) => {
+        if(id){
+            deleteArticle(id)
         }else {
-            console.error('no title')
+            console.error('no id')
         }
     }
+
+
 
     ////////////////////////////////////////////////////////////////////
     // liking articles
@@ -93,7 +95,7 @@ function Home(){
                 headers: { Authorization: `Bearer ${token}` },
             });
             setLikes(response.data)
-            console.log(response.data)
+            //console.log(response.data)
             window.location.reload();
         }catch{
             console.error('Error when liking article:', error);
@@ -106,7 +108,7 @@ function Home(){
                 params: { article_title: title }
             });
             setLikes(response.data)
-            console.log(likes)
+            //console.log(likes)
             window.location.reload();
         }catch{
             console.error('Error when liking article:', error);
@@ -127,6 +129,9 @@ function Home(){
             console.error('no title')
         }
     }
+
+    // View article
+    
     // display a loading message if data is still being fetched
     if (loading) {
         return <div>Loading...</div>;
@@ -175,30 +180,32 @@ function Home(){
             </div>
             <div className="right-container">
                 <h1>Articles</h1>
-                {articles.length > 0 ? (
-                    articles.map(article => (
-                        <div className="grid-item" key={article.title}>
-                            {!(article.image === NaN) &&(    
-                                <img
-                                    src={article.image}
-                                    alt={article.title}
-                                    style={{ width: '100px', height: '100px' }}
-                                    />
-                            )}
-                            <h3>{article.title}</h3>
-                            <p>{article.likes.length} likes</p>
-                            {article.likes.some(like =>like.id === user.id)?(
-                                <button onClick={() => handleUnLike(article.title)}><img src={red_heart} alt="Logo" /></button>
-                            ):(
-                                <button onClick={() => handleLikes(article.title)}><img src={black_heart} alt="Logo" /></button>
-                            )
-                            }
-                            <button onClick={() => handleDelete(article.title)}>Delete</button>
-                        </div>
-                    ))
-                ) : (
-                    <p>No articles found</p>
-                )}
+                <div className="articles-grid">
+                    {articles.length > 0 ? (
+                        articles.map(article => (
+                            <div className="grid-item" key={article.title}>
+                                {!(article.image==='http://127.0.0.1:8000/media/null') && (
+                                    <img className="article-image" src={article.image} alt={article.title} />
+                                )}
+                                <h3>{article.title}</h3>
+                                <p>{article.likes.length} likes</p>
+                                {article.likes.some(like => like.id === user.id) ? (
+                                    <button onClick={() => handleUnLike(article.title)}>
+                                        <img className="like-button" src={red_heart} alt="Unlike" />
+                                    </button>
+                                ) : (
+                                    <button onClick={() => handleLikes(article.title)}>
+                                        <img className="like-button" src={black_heart} alt="Like" />
+                                    </button>
+                                )}
+                                <Link to={`/article/${article.id}`}>Read more</Link> {/* Link to article page */}
+                                <button onClick={() => handleDelete(article.id)}>Delete</button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No articles found</p>
+                    )}
+                </div>
 
             </div>
         </div>
@@ -210,7 +217,7 @@ function Home(){
 
 export default Home
 
-
+//can i view the article i chose to a new read page if so how do i send the title in the new page to get information about the article
 
         {/* i need to fetch from the api:
         his name, users photo, αρθρα (απο τον ιδιο,

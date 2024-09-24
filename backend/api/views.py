@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # For new user model
-from .models import ExtendedUser , Message , Article
+from .models import ExtendedUser , Message , Article , Comment
 from .serializers import CustomUserSerializer, NoteSerializer
 from rest_framework.decorators import api_view
 from django.db.models import Q
@@ -258,30 +258,47 @@ class Articles(APIView):
     # Everyone who is authenticated has access
     permission_classes=[IsAuthenticated]
 
+
     def get(self, request, user_id):
+        # Check if a specific article title is passed in the request
+        article_id = request.query_params.get('article_id')
+
+        if article_id:
+            # If article_title is provided, return the specific article
+            try:
+                article = Article.objects.get(id=article_id)
+                serialized_article = {
+                    "id": article.id,
+                    "title": article.title,
+                    "content": article.content,
+                    "created_at": article.created_at,
+                    "author": article.author.username,
+                    "image": request.build_absolute_uri(article.image.url) if article.image else None,
+                    "likes": [{"id": like.id, "username": like.username} for like in article.likes.all()]
+                }
+                return Response(serialized_article, status=status.HTTP_200_OK)
+            except Article.DoesNotExist:
+                return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # If no specific article_title is passed, return all articles as before
         try:
-            # Get all articles
             articles = Article.objects.all()
-            # serialize the list to return
-            serialized_Articles = [
-            {
-                "title": article.title, 
-                "content": article.content, 
-                "created_at": article.created_at, 
-                "author": article.author.username,  # Access author's username
-                "image": request.build_absolute_uri(article.image.url)  if article.image else None,
-                "likes": [ {"id": like.id, "username": like.username, } for like in article.likes.all() ]
-            } 
-            for article in articles]   
-            # Return the data as a dictionary
-            # response = serialized_Articles
-            return Response(serialized_Articles, status=status.HTTP_200_OK)
+            serialized_articles = [
+                {
+                    "id": article.id,
+                    "title": article.title,
+                    "content": article.content,
+                    "created_at": article.created_at,
+                    "author": article.author.username,
+                    "image": request.build_absolute_uri(article.image.url) if article.image else None,
+                    "likes": [{"id": like.id, "username": like.username} for like in article.likes.all()]
+                }
+                for article in articles
+            ]
+            return Response(serialized_articles, status=status.HTTP_200_OK)
         except Article.DoesNotExist:
-            # if the try failed there are no users being followed by the user_id
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-        except ExtendedUser.DoesNotExist:
-            # in case the try did not go through with the connection
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Articles not found"}, status=status.HTTP_404_NOT_FOUND)
+
 
     # creating a new article    
     def post(self, request, user_id):
@@ -305,7 +322,7 @@ class Articles(APIView):
         if photo :
             article = Article.objects.create(title=title, content=content, author=author, image=photo, public=public)
         else:
-            article = Article.objects.create(title=title, content=content, author=author, public=public)
+            article = Article.objects.create(title=title, content=content, author=author,image=None, public=public)
         author.my_articles.add(article)
         
         return Response({"article": "Article was created successfully"}, status=status.HTTP_201_CREATED)
@@ -315,10 +332,10 @@ class Articles(APIView):
             # get information about the user_id
             user = ExtendedUser.objects.get(id=user_id)
             # get the id of the user that the user_id is trying to unfollow
-            article_title = request.query_params.get("article_title")
+            article_id = request.query_params.get("article_id")
         
-            # get the information of that user
-            article = Article.objects.get(title=article_title)
+            # get the information of that article
+            article = Article.objects.get(id=article_id)
 
             if user == article.author:
             # If the user is the author, delete the article
@@ -335,7 +352,7 @@ class Articles(APIView):
         except Article.DoesNotExist:
             # if the article is not found
             return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
-
+    
 
 class Likes_on_Articles(APIView):
     permission_classes=[IsAuthenticated]
@@ -385,4 +402,72 @@ class Likes_on_Articles(APIView):
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
 
-# commit on git
+class Commenting(APIView):
+    permission_classes=[IsAuthenticated]
+    # List of coments on an
+    def get(self , request , article_id):
+        try:
+            article = Article.objects.get(id= article_id)
+            article_comments = article.comments.all()  
+
+            # Serializing the comments
+            serialized_comments = [
+                {
+                    "id": comment.id,
+                    "sender": comment.sender.username, 
+                    "sender_id": comment.sender.id,
+                    "content": comment.content,
+                    "created_at": comment.created_at
+                } 
+                for comment in article_comments
+            ]
+            
+            return Response(serialized_comments , status=status.HTTP_200_OK)
+        except Article.DoesNotExist:
+            # if the article is not found
+            return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    def post(self , request , article_id):
+        try:
+            
+            article = Article.objects.get(id=article_id)
+
+            comment_content = request.data.get("content")
+
+            author_id = request.data.get("author")
+
+            comment_author = ExtendedUser.objects.get(id=author_id)
+
+            # Create a new comment object and associate it with the article
+            new_comment = Comment.objects.create(sender=comment_author, content=comment_content)
+
+            article.comments.add(new_comment)
+            return Response("Comment was uploaded", status=status.HTTP_200_OK)
+        except ExtendedUser.DoesNotExist:
+            # if the user is not found
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        except Article.DoesNotExist:
+            # if the article is not found
+            return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    def delete(self , request , article_id):
+        try:
+            article = Article.objects.get(id=article_id)
+
+            comment_id = request.query_params.get("comment_id")
+
+            comment = Comment.objects.get(id=comment_id)
+
+            article.comments.remove(comment)
+
+            comment.delete()
+        
+            return Response("comment was deleted", status=status.HTTP_200_OK)\
+
+        except Article.DoesNotExist:
+            # if the article is not found
+            return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
+        

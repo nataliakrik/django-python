@@ -15,6 +15,7 @@ import Notifications from "./pages/Notifications";
 import OtherProfile from "./pages/OtherProfile";
 import Me from "./pages/Me";
 import PostArticle from "./pages/PostArticle"
+import ReadArticle from "./pages/ReadArticle"
 
 
 
@@ -69,6 +70,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="/postarticle" element={<PostArticle />} />
+        <Route path="/article/:id" element={<ReadArticle />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

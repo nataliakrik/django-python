@@ -1,0 +1,150 @@
+
+/* ////////////////*/
+.article-page h1 {
+    background-color: beige;
+    color: rgb(0, 0, 0);
+    font: bolder;
+    font-size: 25;
+    padding: 25px 80px;
+    margin: 15px;
+    text-align: center;
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+}
+
+.article-page p {
+    background-color: beige;
+    color: rgb(41, 38, 38);
+    font: bold;
+    padding: 25px 50px;
+    margin: 25px;
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    align-content: center;
+}
+
+.article-page img {
+    margin: 50px;
+    align-content: center;
+}
+/* ////////////////*/
+
+.Return {
+    background-color: beige;
+    color: rgb(41, 38, 38);
+    font: bold;
+    padding: 8px 10px;
+    margin: 25px 10px;
+}
+/* ////////////////*/
+.comment-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+.comment-section h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* ////////////////*/
+.comment-list-date {
+    width: 100%; 
+    max-width: 600px; /* Maximum width for the comment box */
+    padding: 10px 20px; /* Increase padding for better spacing */
+    border-style: groove;
+    border-radius: 10px;
+    margin: 10px auto; 
+    background-color: beige;
+}
+
+p.comment-date {
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+    margin-top: 5px;
+    margin-bottom: 3px;
+    padding: 0px;
+}
+
+.comment-list {
+    display: flex;
+    justify-content: space-between; 
+    width: 100%;
+    flex-wrap: wrap; /* Allow wrapping of items */
+}
+
+.comment-list .username {
+    flex: 1;
+    margin-right: 10px;
+    color: brown;
+}
+
+.comment-list p {
+    flex: 5;
+    margin: 0;
+    padding: 0;
+    max-width: 100%; /* Ensures the paragraph can take the full width available */
+    overflow-wrap: break-word; /* Ensures long words break and wrap onto the next line */
+    word-wrap: break-word; /* For compatibility */
+    white-space: pre-wrap; /* Preserves whitespace and wraps text */
+}
+
+.comment-list button {
+    flex: 1;
+    background-color: rgb(160, 160, 143);
+    cursor: pointer;
+    border: none;
+    padding: 5px;
+    text-align: center;
+}
+
+.comment-list button:hover {
+    background-color: rgb(121, 121, 111);
+}
+
+/* ////////////////*/
+
+.comment-content {
+    display: flex;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.comment-content textarea {
+    flex: 7;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.comment-content button {
+    flex: 1;
+    margin-left: 10px;
+    background-color: rgb(160, 160, 143);
+    padding: 10px;
+    cursor: pointer;
+}
+
+.comment-content button:hover {
+    background-color: rgb(121, 121, 111);
+}
+
+button.load-more  { 
+    background-color: rgb(160, 160, 143);
+    padding: 10px;
+    cursor: pointer;
+    max-width: max-content;
+    margin: 20px auto; /* Center the button horizontally with margin */
+    display: block; /* Make it a block element to take full width */
+}
+
+button.load-more:hover {
+    background-color: rgb(121, 121, 111);
+}

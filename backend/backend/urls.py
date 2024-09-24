@@ -20,7 +20,6 @@ urlpatterns = [
     path('api/connections/<int:user_id>/', ConnectionView.as_view()),
     path("api/articles/<int:user_id>/", Articles.as_view(), name='articles_list'),
     path("api/articles/likes/<int:user_id>/", Likes_on_Articles.as_view(), name='articles_likes'),
-
 ]
 
 
