@@ -1,34 +1,56 @@
 import React from 'react'
 import { useState } from "react";
-import api from "../api"; // Υποθέτουμε ότι έχεις μια API instance για τα requests
+// import api from "../api"; // Υποθέτουμε ότι έχεις μια API instance για τα requests
 import "../styles/settings.css"
 import { Link } from 'react-router-dom';
 
 function Settings() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [message, setMessage] = useState("");
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+  // const handleEmailChange = (e) => {
+  //   setEmail(e.target.value);
+  // };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+  // const handlePasswordChange = (e) => {
+  //   setPassword(e.target.value);
+  // };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Εδώ μπορείς να κάνεις το αίτημα στην API για ενημέρωση των δεδομένων
+  //   api
+  //     .put("/api/user/update", { email, password })
+  //     .then((response) => {
+  //       setMessage("Τα στοιχεία ενημερώθηκαν επιτυχώς!");
+  //     })
+  //     .catch((error) => {
+  //       setMessage("Σφάλμα κατά την ενημέρωση των στοιχείων.");
+  //     });
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Εδώ μπορείς να κάνεις το αίτημα στην API για ενημέρωση των δεδομένων
-    api
-      .put("/api/user/update", { email, password })
-      .then((response) => {
-        setMessage("Τα στοιχεία ενημερώθηκαν επιτυχώς!");
-      })
-      .catch((error) => {
-        setMessage("Σφάλμα κατά την ενημέρωση των στοιχείων.");
-      });
-  };
+    const obj = {
+      email: e.target.elements.email.value,
+      password: e.target.elements.password.value
+    };
+    // update data in the database (PUT method)
+    // alert(`new email: ${obj.email} and new password ${obj.password}`);
+    const response = await fetch('An-endpoint', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  body: JSON.stringify(obj)
+});
+    if(!response.ok){
+      alert("something went wrong");
+    }
+
+    e.target.reset();
+  }
 
   return (
     <div>
@@ -52,8 +74,6 @@ function Settings() {
               type="email"
               id="email"
               name="email"
-              value={email}
-              onChange={handleEmailChange}
               required
             />
           </div>
@@ -63,14 +83,11 @@ function Settings() {
               type="password"
               id="password"
               name="password"
-              value={password}
-              onChange={handlePasswordChange}
               required
             />
           </div>
-          <button type="submit">Αποθήκευση Αλλαγών</button>
+          <button type="submit">Αλλαγή στοιχείων</button>
         </form>
-        {message && <p>{message}</p>}
       </div>
     </div>
   );
