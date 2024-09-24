@@ -140,6 +140,43 @@ class UserInfo(APIView):
         # Send back information
         return Response(user_data)
 
+    # change email and password for current user
+    def put(self, request):
+        try:    
+            # Old password check
+            old_password = request.data.get("old_password")
+            # New password
+            password = request.data.get("new_password")
+            # New email
+            email =  request.data.get("new_email")
+
+            if not password or not email:
+                return Response({"error": "New password and email are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+            # Gets the current user from the request
+            user = request.user
+
+            # Check if user entered the correct password
+            if user.check_password(old_password):
+                # Step 2: Update password and email
+                user.set_password(password)  # This automatically hashes the new password
+                user.email = email
+                
+                # Step 3: Save changes
+                user.save()
+            
+                # Send back information   
+                return Response({"message": "Email and password updated"}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({"error": "Incorrect old password"}, status=status.HTTP_400_BAD_REQUEST)
+                
+            
+        except ExtendedUser.DoesNotExist:
+            # if the try failed there are no users being followed by the user_id
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
 ################################################################################################
 ##############################################
 # Send and get messages

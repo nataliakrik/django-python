@@ -1,52 +1,43 @@
-import React from 'react'
+import React from 'react';
 import { useState } from "react";
-// import api from "../api"; // Υποθέτουμε ότι έχεις μια API instance για τα requests
-import "../styles/settings.css"
+import "../styles/settings.css";
 import { Link } from 'react-router-dom';
+import api from "../api";
 
 function Settings() {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [message, setMessage] = useState("");
-
-  // const handleEmailChange = (e) => {
-  //   setEmail(e.target.value);
-  // };
-
-  // const handlePasswordChange = (e) => {
-  //   setPassword(e.target.value);
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Εδώ μπορείς να κάνεις το αίτημα στην API για ενημέρωση των δεδομένων
-  //   api
-  //     .put("/api/user/update", { email, password })
-  //     .then((response) => {
-  //       setMessage("Τα στοιχεία ενημερώθηκαν επιτυχώς!");
-  //     })
-  //     .catch((error) => {
-  //       setMessage("Σφάλμα κατά την ενημέρωση των στοιχείων.");
-  //     });
-  // };
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const email = e.target.elements.email.value;
+    const old_password = e.target.elements.old_password.value;
+    const new_password = e.target.elements.new_password.value;
+
     const obj = {
-      email: e.target.elements.email.value,
-      password: e.target.elements.password.value
+      new_email: email,
+      old_password: old_password,
+      new_password: new_password,
     };
-    // update data in the database (PUT method)
-    // alert(`new email: ${obj.email} and new password ${obj.password}`);
-    const response = await fetch('An-endpoint', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  body: JSON.stringify(obj)
-});
-    if(!response.ok){
-      alert("something went wrong");
+
+    console.log(obj);
+    // Update the data in the backend (PUT request)
+    const response = await api.put('api/usernameAndPhoto/', 
+      JSON.stringify(obj), 
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      }
+    );
+    
+    
+    console.log(response);
+    
+    if (!response) {
+      setMessage("Something went wrong. Please check your current password and try again.");
+    } else {
+      setMessage("Details updated successfully!");
     }
 
     e.target.reset();
@@ -54,22 +45,21 @@ function Settings() {
 
   return (
     <div>
-
       <div className="top-bar">          
-        <Link to ="/home" className="top-bar-link">Home page</Link>
-        <Link to ="/jobs" className="top-bar-link">Jobs</Link>
-        <Link to ="/messages" className="top-bar-link">Messages</Link>
-        <Link to ="/mynetwork" className="top-bar-link">My Network</Link>
-        <Link to ="/notifications" className="top-bar-link">Notifications</Link>
-        <Link to ="/profile" className="top-bar-link">Profile</Link>
-        <Link to ="/settings" className="top-bar-link">Settings</Link>
+        <Link to="/home" className="top-bar-link">Home page</Link>
+        <Link to="/jobs" className="top-bar-link">Jobs</Link>
+        <Link to="/messages" className="top-bar-link">Messages</Link>
+        <Link to="/mynetwork" className="top-bar-link">My Network</Link>
+        <Link to="/notifications" className="top-bar-link">Notifications</Link>
+        <Link to="/profile" className="top-bar-link">Profile</Link>
+        <Link to="/settings" className="top-bar-link">Settings</Link>
       </div>
 
       <div className="settings-container">
-        <h2>Ρυθμίσεις</h2>
+        <h2>Settings</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Νέο Email:</label>
+            <label htmlFor="email">New Email:</label>
             <input
               type="email"
               id="email"
@@ -78,16 +68,27 @@ function Settings() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Νέος Κωδικός:</label>
+            <label htmlFor="old-password">Old Password:</label>
             <input
               type="password"
-              id="password"
-              name="password"
+              id="old_password"  // Unique ID for old password
+              name="old_password"
               required
             />
           </div>
-          <button type="submit">Αλλαγή στοιχείων</button>
+          <div className="form-group">
+            <label htmlFor="new-password">New Password:</label>
+            <input
+              type="password"
+              id="new_password"  // Unique ID for new password
+              name="new_password"
+              required
+            />
+          </div>
+          <button type="submit">Change Details</button>
         </form>
+
+        {message && <p>{message}</p>}
       </div>
     </div>
   );
