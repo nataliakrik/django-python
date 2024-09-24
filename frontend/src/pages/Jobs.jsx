@@ -13,7 +13,7 @@ function Jobs(){
                     <Link to ="/profile" className="top-bar-link">Profile</Link>
                     <Link to ="/settings" className="top-bar-link">Settings</Link>        
         </div>
-        <h1>Jobs ή Αγγελιες</h1>
+        <h2>Jobs ή Αγγελιες</h2>
 
         {/*fetch from api:
         αγγελιες φιλων και μη */}
@@ -22,7 +22,9 @@ function Jobs(){
         -Πλαισιο να κανουμε τη δικια μας αγγελια
         -Αγγελιες φιλων και μη (συμφωνα με τις δεξιοτητες μας) */}
 
-        
+        <Link to="/postjob">Post a job</Link>
+
+
 
     </div>
 }
