@@ -75,6 +75,8 @@ class LoginView(APIView):
         return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+######################################################################
+# I will delete this classes soon we dont need them
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
@@ -98,10 +100,10 @@ class NoteDelete(generics.DestroyAPIView):
         user = self.request.user
         return Note.objects.filter(author=user)
 
+## CLASSES ABOUT USERS
+#######################################################################################################
 
-
-
-# A list of all the users
+# A list of all the users for the admin only
 class UserListView(APIView):
     # only admins have access to this class
     permission_classes = [IsAdminUser]
@@ -124,11 +126,12 @@ class UsernamesListView(APIView):
         return Response(users)
     
 
-# Return username and photo
+# Return single users info or change users info (will be added)
 class UserInfo(APIView):
     permission_classes = [IsAuthenticated]
+
+    # Get user info and photo profile of the authenticated user
     def get(self, request):
-        # Get username and photo of the authenticated user
         user_data = ExtendedUser.objects.filter(id=request.user.id).values('id', 'username', 'profile_picture','email', 'phone_number', 'my_articles')
         for user in user_data:
             if user['profile_picture']:
@@ -137,7 +140,7 @@ class UserInfo(APIView):
         # Send back information
         return Response(user_data)
 
-
+################################################################################################
 ##############################################
 # Send and get messages
 
@@ -185,7 +188,7 @@ class MessagesBetweenUsers(APIView):
         return Response({"message": "Message sent successfully"}, status=status.HTTP_201_CREATED)
     
 
-
+########################################################################################################
 # Connections between users
 
 class ConnectionView(APIView):
@@ -254,11 +257,19 @@ class ConnectionView(APIView):
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
+#########################################################################################################
+"""
+    I will change that to just public and every user has a list of all the shared with them articles 
+    that other users connected with them liked
+
+    i Will create a function that will return all articles that other users who are connected with current user liked
+"""
 class Articles(APIView):
     # Everyone who is authenticated has access
     permission_classes=[IsAuthenticated]
 
-
+    # If the frontend sent an article_id it will send back information of that article else it will
+    # Returns a list of all articles that are made public or private 
     def get(self, request, user_id):
         # Check if a specific article title is passed in the request
         article_id = request.query_params.get('article_id')
@@ -280,7 +291,7 @@ class Articles(APIView):
             except Article.DoesNotExist:
                 return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        # If no specific article_title is passed, return all articles as before
+        # If no specific article_id is passed, return all articles as before
         try:
             articles = Article.objects.all()
             serialized_articles = [
@@ -327,6 +338,7 @@ class Articles(APIView):
         
         return Response({"article": "Article was created successfully"}, status=status.HTTP_201_CREATED)
 
+    # Only the author gets to delete the article
     def delete(self, request, user_id):
         try:
             # get information about the user_id
@@ -353,7 +365,10 @@ class Articles(APIView):
             # if the article is not found
             return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
     
+##################################################################################################################
 
+
+# Adding likes on articles or removing likes off articles
 class Likes_on_Articles(APIView):
     permission_classes=[IsAuthenticated]
     # when liking an article
@@ -379,6 +394,7 @@ class Likes_on_Articles(APIView):
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     
+    # Unliking article removing it from the liked articles list 
     def delete(self , request, user_id):
         try:
             user = ExtendedUser.objects.get(id=user_id)
@@ -401,10 +417,12 @@ class Likes_on_Articles(APIView):
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         
+#####################################################################################################
 
+# Comments on articles
 class Commenting(APIView):
     permission_classes=[IsAuthenticated]
-    # List of coments on an
+    # List of coments on an article
     def get(self , request , article_id):
         try:
             article = Article.objects.get(id= article_id)
@@ -427,7 +445,7 @@ class Commenting(APIView):
             # if the article is not found
             return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
 
-
+    # Creating a comment on article with article_id
     def post(self , request , article_id):
         try:
             
@@ -452,7 +470,7 @@ class Commenting(APIView):
             # if the article is not found
             return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
 
-
+    # Deleting comment on article_id only if the user connected is the author
     def delete(self , request , article_id):
         try:
             article = Article.objects.get(id=article_id)
@@ -470,4 +488,6 @@ class Commenting(APIView):
         except Article.DoesNotExist:
             # if the article is not found
             return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+
+
+##########################################################################################################
