@@ -16,6 +16,7 @@ import OtherProfile from "./pages/OtherProfile";
 import Me from "./pages/Me";
 import PostArticle from "./pages/PostArticle"
 import ReadArticle from "./pages/ReadArticle"
+import PostJob from "./pages/PostJob";
 
 
 
@@ -71,6 +72,7 @@ function App() {
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="/postarticle" element={<PostArticle />} />
         <Route path="/article/:id" element={<ReadArticle />} />
+        <Route path="/postjob" element={<PostJob />}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
