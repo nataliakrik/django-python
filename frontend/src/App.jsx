@@ -57,22 +57,23 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/jobs" element={<Jobs />}/> 
-        <Route path="/messages" element={<Messages />}/>
-        <Route path="/mynetwork" element={<MyNetwork />}/>
-        <Route path="/notifications" element={<Notifications />}/>
-        <Route path="/otherprofile" element={<OtherProfile />}/>
-        <Route path="/profile" element={<Me />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>}/>
+
+        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>}/>
+        <Route path="/mynetwork" element={<ProtectedRoute><MyNetwork /></ProtectedRoute>}/>
+        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>}/>
+        <Route path="/otherprofile" element={<ProtectedRoute><OtherProfile /></ProtectedRoute>}/>
+        <Route path="/profile" element={<ProtectedRoute><Me /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         
         
         {/* Other routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
-        <Route path="/postarticle" element={<PostArticle />} />
-        <Route path="/article/:id" element={<ReadArticle />} />
-        <Route path="/postjob" element={<PostJob />}/>
+        <Route path="/postarticle" element={<ProtectedRoute><PostArticle /></ProtectedRoute>} />
+        <Route path="/article/:id" element={<ProtectedRoute><ReadArticle /></ProtectedRoute>} />
+        <Route path="/postjob" element={<ProtectedRoute><PostJob /></ProtectedRoute>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

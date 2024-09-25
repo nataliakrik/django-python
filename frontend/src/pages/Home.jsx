@@ -3,7 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import api from "../api"; 
 //import Note from '../components/Note'
 import "../styles/Note.css"
-import "./Profile.css"
+//import "./Profile.css"
 import red_heart from "../assets/red_heart.png"
 import black_heart from "../assets/black_heart.png"
 

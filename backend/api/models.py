@@ -30,7 +30,15 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+# A class that will be contained by the extended user class
+class PersonalDetails(models.Model):
+    experience = models.TextField()
+    education = models.TextField()
+    skills = models.TextField()
+    isExperiencePublic = models.BooleanField()
+    isEducationPublic = models.BooleanField()
+    isSkillsPublic = models.BooleanField()
 
 
 # extending default user model
@@ -39,6 +47,8 @@ class ExtendedUser(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     # adding picture to the user
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    # class for the personal details of the user
+    personal_details = models.ForeignKey(PersonalDetails, on_delete=models.CASCADE, related_name="further_details", blank=True, null=True)
     # A list of all the users that current user follows
     follows = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
     # A list of all the users that are following current user

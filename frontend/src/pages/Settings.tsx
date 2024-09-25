@@ -58,36 +58,20 @@ function Settings() {
       <div className="settings-container">
         <h2>Settings</h2>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">New Email:</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="old-password">Old Password:</label>
-            <input
-              type="password"
-              id="old_password"  // Unique ID for old password
-              name="old_password"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="new-password">New Password:</label>
-            <input
-              type="password"
-              id="new_password"  // Unique ID for new password
-              name="new_password"
-              required
-            />
-          </div>
-          <button type="submit">Change Details</button>
+            <div className="form-group">
+                <label htmlFor="email">New Email:</label>
+                <input type="email" id="email" name="email" required />
+            </div>
+            <div className="form-group">
+                <label htmlFor="old-password">Old Password:</label>
+                <input type="password" id="old_password" name="old_password" required />
+            </div>
+            <div className="form-group">
+                <label htmlFor="new-password">New Password:</label>
+                <input type="password" id="new_password" name="new_password" required />
+            </div>
+            <button className="settings-submit" type="submit">Change Details</button>
         </form>
-
         {message && <p>{message}</p>}
       </div>
     </div>

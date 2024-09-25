@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # For new user model
-from .models import ExtendedUser , Message , Article , Comment
+from .models import ExtendedUser , Message , Article , Comment , PersonalDetails
 from .serializers import CustomUserSerializer, NoteSerializer
 from rest_framework.decorators import api_view
 from django.db.models import Q
@@ -175,6 +175,38 @@ class UserInfo(APIView):
         except ExtendedUser.DoesNotExist:
             # if the try failed there are no users being followed by the user_id
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+###########################################
+## Adding personal details to the current user
+
+class AddPersonalDetails(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self , request):
+        user = request.user
+        user_details = user.personal_details
+        details = {"experience": user_details.experience ,"education": user_details.education , "skills": user_details.skills, "experience_public": user_details.isExperiencePublic, "education_public": user_details.isEducationPublic , "skills_public": user_details.isSkillsPublic }
+        return Response(details)
+
+    def post(self , request):
+        # if field is empty keep it empty
+        experience = request.data.get("experience", "")
+        education = request.data.get("education", "")
+        skills = request.data.get("skills", "")
+        experience_public = request.data.get("experience_public", "false").lower() == "true"
+        education_public = request.data.get("education_public", "false").lower() == "true"
+        skills_public = request.data.get("skills_public", "false").lower() == "true"
+        
+        details = PersonalDetails.objects.create(experience= experience ,education= education , skills= skills, isExperiencePublic= experience_public, isEducationPublic= education_public , isSkillsPublic= skills_public )
+        user = request.user
+        if user.personal_details == None:
+            user.personal_details=details
+        else:
+            old_details = user.personal_details
+            old_details.delete()
+            user.personal_details=details
+
+        user.save()
+        return Response({"article": "Article was created successfully"}, status=status.HTTP_201_CREATED)
 
 
 ################################################################################################
