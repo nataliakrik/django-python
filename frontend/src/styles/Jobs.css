@@ -1,0 +1,9 @@
+
+.Job_frame{
+    display: flex;
+    background-color: #d1cdcd;
+    width: 700px;
+    overflow-wrap: break-word;
+    margin: auto;
+}
+
