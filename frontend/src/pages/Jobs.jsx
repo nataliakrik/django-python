@@ -34,13 +34,13 @@ function Jobs() {
   let data_from_fetch = {
     Jobs: [
       {
-        job_title: "",
-        skills: "",
-        company: "",
-        workplace: "",
-        location: "",
-        job_type: "",
-        general_information: "",
+        job_title: "-",
+        skills: "-",
+        company: "-",
+        workplace: "-",
+        location: "-",
+        job_type: "-",
+        general_information: "-",
       },
     ],
   };
