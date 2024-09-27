@@ -8,6 +8,7 @@ function MyNetwork() {
     const [users, setUsers] = useState([]); // List of available users
     const [following, setFollowing] = useState([]); // list of the users we follow
     const [followers, setFollowers] = useState([]); // list of the users that follow current user
+    const [requests, setRequests] = useState([]); // list of the follow requests user has sent
     const token = localStorage.getItem('access');  // Token for API calls
     const [selectedUser, setSelectedUser] = useState(null);  // Track selected user
     const [loading, setLoading] = useState(true);  // State to handle loading
@@ -109,6 +110,7 @@ function MyNetwork() {
                     });
                     setFollowing(response.data.following);
                     setFollowers(response.data.followers);
+                    setRequests(response.data.requested)
                 } catch (error) {
                     console.error('Error fetching users:', error);
                 }
@@ -172,9 +174,14 @@ function MyNetwork() {
                             >
                                 {user.username}
                                 {following.some(followedUser => followedUser.username === user.username) ? (
-                                    <button className='following' onClick={() => handleUnfollow(user)}>Following</button>
+                                    <button className="following" onClick={() => handleUnfollow(user)}>Following</button>
                                 ) : (
-                                    <button className='follow' onClick={() => handleUserClick(user)}>Follow</button>
+                                    // Check if the user has sent a follow request
+                                    requests.some(requestedUser => requestedUser.id === user.id) ? (
+                                        <button className="requested" onClick={() => handleUnfollow(user)}>Requested</button>
+                                    ) : (
+                                        <button className="follow" onClick={() => handleUserClick(user)}>Follow</button>
+                                    )
                                 )}
                             </li>
                         ))}

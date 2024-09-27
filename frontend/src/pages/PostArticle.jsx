@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 import api from "../api"; 
-import "../styles/Note.css"; 
+import "../styles/post_article.css"; 
 
 function PostArticle() {
     const [title, setTitle] = useState("");
@@ -62,40 +62,46 @@ function PostArticle() {
     return (
         <div className="post-article">
             <h1>Post an Article</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Title:</label>
+            <form onSubmit={handleSubmit} className="form-container">
+                <div className="title">
+                    <label>Add Title :</label>
                     <input 
+                        className="form-input"
                         type="text" 
                         value={title} 
                         onChange={(e) => setTitle(e.target.value)} 
                         required 
                     />
                 </div>
-                <div>
-                    <label>Content:</label>
+                <div className="content">
+                    <label>Content of the Article:</label>
                     <textarea 
+                        rows={7}
+                        cols={40}
+                        className="form-textarea"
                         value={content} 
                         onChange={(e) => setContent(e.target.value)} 
                         required 
                     />
                 </div>
-                <div>
-                    <label>Upload Photo:</label>
+                <div className="image-input">
+                    <label>Upload image with the article :</label>
                     <input 
+                        className="image"
                         type="file" 
                         accept="image/*" 
                         onChange={(e) => setPhoto(e.target.files[0])} 
                     />
                 </div>
-                <div>
+                <div className="check-box">
                     <label>
+                        Uploading the Article as Public
                         <input 
+                            className="checkbox"
                             type="checkbox" 
                             checked={publicArticle} 
                             onChange={() => setPublicArticle(!publicArticle)} 
                         />
-                        Public Article
                     </label>
                 </div>
                 <button type="submit">Post Article</button>

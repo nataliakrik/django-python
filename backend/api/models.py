@@ -15,7 +15,27 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"From {self.sender} at {self.created_at}"
+"""
+class Jobs(models.Model):
+    FULL_TIME = 'full_time'
+    PART_TIME = 'part_time'
+    # Available options for the job type
+    TYPE_CHOICES =[
+        (FULL_TIME , 'full time job'),
+        (PART_TIME , 'part time job'),
+    ]
 
+    title = models.CharField(max_length=100 , unique=True)
+    job_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="jobs")
+    company = models.TextField()
+    location = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    job_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    requested_skills = models.TextField()
+    requested_education = models.TextField()
+    general_information = models.TextField()
+    applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, symmetrical=False, related_name='jobs', blank=True) 
+"""
 
 # Article model as before
 class Article(models.Model):
@@ -30,6 +50,24 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+class Notifications(models.Model):
+    FOLLOW_REQUEST = 'follow_request'
+    NEW_LIKE = 'new_like'
+    NEW_COMMENT = 'new_comment'
+    
+    NOTIFICATION_TYPE_CHOICES = [
+        (FOLLOW_REQUEST, 'New Follow Request'),
+        (NEW_LIKE, 'New Like'),
+        (NEW_COMMENT, 'New Comment'),
+    ]
+    # the notification type has to be one of these:
+    # 1) new follow request 2) new like 3)new comment
+    type = models.CharField(max_length=20, choices=NOTIFICATION_TYPE_CHOICES)
+    # time of notification
+    created_at = models.DateTimeField(auto_now_add=True)
+    # id of the object that this notification is about
+    type_id = models.IntegerField()
 
 # A class that will be contained by the extended user class
 class PersonalDetails(models.Model):
@@ -53,12 +91,18 @@ class ExtendedUser(AbstractUser):
     follows = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
     # A list of all the users that are following current user
     follower = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
+    # A list of all the users that the current user requested to follow
+    request_to_others = models.ManyToManyField('self', symmetrical=False, related_name='follow_to_others', blank=True)
+    # A list of all the users that requested to follow current user
+    request_from_others = models.ManyToManyField('self', symmetrical=False, related_name='follow_from_others', blank=True)
     # A list of articles published by user
     my_articles = models.ManyToManyField(Article, symmetrical=False, related_name='Articles_by_user', blank=True)
     # A list of all the articles the user liked
     liked_articles = models.ManyToManyField(Article, symmetrical=False, related_name='liked', blank=True)
     # A list of all the private articles that are shared with you
     shared_articles = models.ManyToManyField(Article, symmetrical=False, related_name='shared', blank=True)
+    # A list for users notifications
+    notifications = models.ManyToManyField(Notifications, symmetrical=False, related_name='notifications', blank=True)
 # change the line in the notes class to this
 # author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes")
 

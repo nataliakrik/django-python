@@ -52,14 +52,16 @@ function Form({ route, method }) {
             }
 
             // function to receive tokens in order to login {route ="/api/token/" or ="/api/user/register/"}
+
             const res = await api.post(route, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
+            
             if (isLogin) {
                 // Setting up the tokens value
+                //console.log(formData)
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
@@ -93,66 +95,76 @@ function Form({ route, method }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="form-container">
-            <h1>{nameText}</h1>
-            
-            <input
-                className="form-input"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
-            />
-            <input
-                className="form-input"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-            />
-            {!isLogin && (
-                <>
-                    <input
-                        className="form-input"
-                        type="password"
-                        placeholder="Confirm Password"
-                        value={passwordConfirm}
-                        onChange={(e) => setPasswordConfirm(e.target.value)}
-                    />
-                    <input
-                        className="form-input"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Email"
-                    />
-                    <input
-                        className="form-input"
-                        type="tel"
-                        value={phone_number}
-                        onChange={(e) => setPhone_number(e.target.value)}
-                        placeholder="Phone Number"
-                    />
-                    <input 
-                        className="form-input"
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setImg(e.target.files[0])} 
-                        placeholder="Your Image"
-                    />
-                </>
-            )}
-            <select
-                className="form-input"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-            >
-                <option value="professional">Professional</option>
-                <option value="admin">Admin</option>
-            </select>
+        <div className="container">
+            <form onSubmit={handleSubmit} className="form-container">
+                <h1>{nameText}</h1>
+                <input
+                    className="form-input"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Username"
+                    required
+                />
+                <input
+                    className="form-input"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    required
+                />
+                {!isLogin && (
+                    <>
+                        <input
+                            className="form-input"
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={passwordConfirm}
+                            onChange={(e) => setPasswordConfirm(e.target.value)}
+                            required
+                        />
+                        <input
+                            className="form-input"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            required
+                        />
+                        <input
+                            className="form-input"
+                            type="tel"
+                            value={phone_number}
+                            onChange={(e) => setPhone_number(e.target.value)}
+                            placeholder="Phone Number"
+                        />
+                        <div className="form-file-container">
+                            <label htmlFor="profile-picture" className="form-label">
+                                Add a profile picture
+                            </label>
+                            <input
+                                id="profile-picture"
+                                className="form-input form-file-input"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setImg(e.target.files[0])}
+                            />
+                        </div>
+                    </>
+                )}
+                <select
+                    className="form-input"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                >
+                    <option value="professional">Professional</option>
+                    <option value="admin">Admin</option>
+                </select>
 
-            <button className="form-button" type="submit">{nameText}</button>
-        </form>
+                <button className="form-button" type="submit">{nameText}</button>
+            </form>
+        </div>
     );
 }
 

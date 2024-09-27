@@ -1,0 +1,20 @@
+.notifications-page {
+    padding: 20px;
+}
+
+.connection-requests, .article-notifications {
+    margin: 20px 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+button {
+    margin-right: 10px;
+}

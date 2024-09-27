@@ -2,6 +2,7 @@ from django.shortcuts import render
 #from django.contrib.auth.models import User
 from rest_framework import generics
 #from .serializers import UserSerializer, NoteSerializer
+from itertools import chain
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .models import Note
 from django.contrib.auth import authenticate
@@ -12,7 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # For new user model
-from .models import ExtendedUser , Message , Article , Comment , PersonalDetails
+from .models import ExtendedUser , Message , Article , Comment , PersonalDetails , Notifications
 from .serializers import CustomUserSerializer, NoteSerializer
 from rest_framework.decorators import api_view
 from django.db.models import Q
@@ -42,13 +43,14 @@ class LoginView(APIView):
     # When the view receives a POST request, it uses the provided data (username, password, role) to authenticate the user and return a token.
     # const res = await api.post(route , data); <-- this is from the form.jsx route represents login or sign up data represents data
     def post(self, request):
-        username = request.data.get('username')
-        #email = request.data.get('email')
-        password = request.data.get('password')
-        role = request.data.get('role')
+        username = request.data.get("username")
+        password = request.data.get("password")
+        role = request.data.get("role")
+        
 
-        # Checks if the user exist and authenticates them
+        # Get the username from the user and authenticate
         user = authenticate(username=username, password=password)
+
 
         if user is not None:
             # If the user is an admin
@@ -262,7 +264,7 @@ class MessagesBetweenUsers(APIView):
 
 class ConnectionView(APIView):
     permission_classes = [IsAuthenticated]
-    # View follows list of user with the user_id
+    # View follows and followers list of user with the user_id
     def get(self, request, user_id):
         try:
             # Get user inforamtion of the user with id = user_id
@@ -274,19 +276,22 @@ class ConnectionView(APIView):
 
             followers = user.follower.all()
             serialized_followers = [{"id": conn.id, "username": conn.username, "email": conn.email, "phone_number": conn.phone_number} for conn in followers]
+            requested = user.request_to_others.all()
+            serialized_requested = [{"id": conn.id, "username": conn.username, "email": conn.email, "phone_number": conn.phone_number} for conn in requested]
             # Return the data as a dictionary
             response = {
                 "following": serialized_follows,
-                "followers": serialized_followers
+                "followers": serialized_followers,
+                "requested": serialized_requested
             }
             return Response(response, status=status.HTTP_200_OK)
         except ExtendedUser.DoesNotExist:
             # if the try failed there are no users being followed by the user_id
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Add a new following to user_id
-    # the connection is going to be one way like a follow
-    # user_id following connection_id
+    # A new request to follow a user 
+    # the connection is going to be one way like a follow if the other user accepts it
+    # user_id requst to follow connection_id
     def post(self, request, user_id):
         try:
             # get information about the user_id
@@ -296,11 +301,20 @@ class ConnectionView(APIView):
             # get the information of that user
             connection = ExtendedUser.objects.get(id=connection_id)
             # add the information of the connected user to the list of connected users
-            user.follows.add(connection)
+            user.request_to_others.add(connection)
             # add the follower to the connection_id users followers list
-            connection.follower.add(user)
+            # Add that id to notification
+            connection.request_from_others.add(user)
+
+            # CREATE NOTIFICATION!!!! 
+            # article = Article.objects.create(title=title, content=content, author=author, image=photo, public=public)
+            notification = Notifications.objects.create(type="follow_request" , type_id=user_id)
+            # Add the notification to the user's list that we want to follow
+            connection.notifications.add(notification)
+            
+
             # return a message that the connection was successful
-            return Response({"message": "Connection added successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "follow request was sent successfully"}, status=status.HTTP_201_CREATED)
         except ExtendedUser.DoesNotExist:
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -318,12 +332,100 @@ class ConnectionView(APIView):
             if connection in user.follows.all():
                 user.follows.remove(connection)
                 connection.follower.remove(user)
-            
+            elif connection in user.request_to_others.all():
+                user.request_to_others.remove(connection)
+                connection.request_from_others.remove(user)
             
             return Response({"message": "Unfollow was successfull"}, status=status.HTTP_201_CREATED)
         except ExtendedUser.DoesNotExist:
             # in case the try did not go through with the connection
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+######################################################################
+
+
+class NotificationView(APIView):
+    permission_classes = [IsAuthenticated]
+    # A list of all the notifications for connected user
+    def get(self, request ):
+        try:
+            # current connected user
+            user = request.user
+            # notifications of the user
+            notifications = user.notifications.all()
+
+            serialized_notifications = [{"id": notification.id, "type": notification.type, "type_id": notification.type_id, "created_at": notification.created_at} for notification in notifications]
+            # return the list of dictionaries
+            return Response(serialized_notifications, status=status.HTTP_200_OK)
+        
+        except ExtendedUser.DoesNotExist:
+            # if the try failed there are no users being followed by the user_id
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Since new notifications are created in totally different categories
+    # We will accept or deny connections through the notification page
+    def post(self, request ):
+        try:
+            print("Entered post function")
+            # Accepts or denies a follow request
+            user = request.user
+            print(f"User ID: {user.id}")
+            # if option is accepted we get the type id to find the the connection 
+            # in the request from user list in the current user
+            # the id is the user that made the folllow request and current user decides to accept or not
+            print(f"Request data: {request.data}")
+            decision = request.data.get("decision")
+            # id from user that wants to follow
+            follower_id = request.data.get("type_id")
+            # id to delete the notification later
+            notification_id = request.data.get("notification_id")
+            print(f"Decision: {decision}, Follower ID: {follower_id}, Notification ID: {notification_id}")
+
+            # profile of the user that wants to follow current user
+            new_follower = user.request_from_others.filter(id=follower_id).first()
+            if not new_follower:
+                return Response({"error": "Follower not found"}, status=status.HTTP_404_NOT_FOUND)
+            #print(new_follower)
+            print(f"new_follower ID: {new_follower.id}")
+
+            if decision.lower() == 'accept' :
+                
+                # users model modified
+                user.follower.add(new_follower)
+                user.request_from_others.remove(new_follower)
+                # new follower model modified
+                new_follower.follows.add(user)
+                new_follower.request_to_others.remove(user)
+            else:
+                # Remove the connection from both requested lists
+                user.request_from_others.remove(new_follower)
+                new_follower.request_to_other.remove(user)
+
+            # Get the notification object and delete
+            notification = Notifications.objects.get(id=notification_id)
+            notification.delete()
+            return Response("Notification process was sucessfull" , status=status.HTTP_200_OK)
+        except ExtendedUser.DoesNotExist:
+            # if the try failed there are no users being followed by the user_id
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    def delete(self , request):
+        try:
+            notification_id = request.query_params.get("notification_id")
+            if notification_id :
+                notification = Notifications.objects.get(id=notification_id)
+                notification.delete()
+                return Response({"notification": "notification was deleted"}, status=status.HTTP_200_OK)
+            else:
+                
+                Notifications.objects.all().delete()
+                return Response({"notification" : "all notifications were deleted"}, status=status.HTTP_200_OK)
+
+        except Notifications.DoesNotExist:
+            # if the try failed there are no users being followed by the user_id
+            return Response({"error": "Notifications not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 
 #########################################################################################################
@@ -362,7 +464,28 @@ class Articles(APIView):
         
         # If no specific article_id is passed, return all articles as before
         try:
-            articles = Article.objects.all()
+            # All public articles
+            # Get all public articles
+            public_articles = Article.objects.filter(public=True)
+            
+            # Get the current user and their followed users
+            current_user = request.user
+            follows = current_user.follows.all()
+
+            # get current users private articles
+            my_private_articles = current_user.my_articles.filter(public=False)
+            
+            # A list for private articles
+            private_articles = list(my_private_articles)
+            
+            # Collect private articles for each followed user
+            for user in follows:
+                users_private_articles = user.articles.filter(public=False)
+                private_articles = list(chain(private_articles, users_private_articles))  # Merge private articles
+
+            # Combine public and private articles
+            all_articles = list(chain(public_articles, private_articles))
+
             serialized_articles = [
                 {
                     "id": article.id,
@@ -373,7 +496,7 @@ class Articles(APIView):
                     "image": request.build_absolute_uri(article.image.url) if article.image else None,
                     "likes": [{"id": like.id, "username": like.username} for like in article.likes.all()]
                 }
-                for article in articles
+                for article in all_articles
             ]
             return Response(serialized_articles, status=status.HTTP_200_OK)
         except Article.DoesNotExist:
@@ -452,7 +575,16 @@ class Likes_on_Articles(APIView):
             user.liked_articles.add(article)
             
             article.likes.add(user)
+
+            # Add notification about a new_like on the article's author notification list as new like
+            article_author = article.author
+            # Except if the creator liked it
+            if article_author.id != user_id :
+                notification = Notifications.objects.create(type="new_like" , type_id=user_id)
+                article_author.notifications.add(notification)
+
             likes_list = article.likes.all()
+
             serialized_Likes = [
             {
                 "id": like.id, 
@@ -522,12 +654,22 @@ class Commenting(APIView):
 
             comment_content = request.data.get("content")
 
-            author_id = request.data.get("author")
+            author_id = int(request.data.get("author"))
 
             comment_author = ExtendedUser.objects.get(id=author_id)
 
             # Create a new comment object and associate it with the article
             new_comment = Comment.objects.create(sender=comment_author, content=comment_content)
+
+            # Add notification about comment on the authors notification list as new_comment
+            article_author = article.author
+            print(article_author.id , author_id)
+            print(f"article_author.id: {article_author.id} (type: {type(article_author.id)})")
+            print(f"author_id: {author_id} (type: {type(author_id)})")
+            if article_author.id != author_id :
+                print(article_author.id , author_id)
+                notification = Notifications.objects.create(type="new_comment" , type_id=author_id)
+                article_author.notifications.add(notification)
 
             article.comments.add(new_comment)
             return Response("Comment was uploaded", status=status.HTTP_200_OK)

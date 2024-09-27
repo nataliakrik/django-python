@@ -1,0 +1,189 @@
+.home {
+  min-height: 100vh; /* Allows the home section to expand with content */
+  background-image: url('../assets/home-background.jpg'); /* Background Image */
+  background-size: cover; /* Ensures the image covers the entire background */
+  background-position: center;
+  background-attachment: fixed; /* Keeps the background fixed */
+
+  background-repeat: no-repeat;
+  background-color: rgba(128, 128, 128, 0.459); /* Grayish background */
+  position: relative;
+  overflow-x: hidden; /* Hide horizontal overflow if necessary */
+}
+
+
+.home-container {
+  display: flex;
+  padding: 10px;
+  margin: 20px 5px;
+  border-radius: 5px;
+  width: auto; /* Adjust width as necessary */
+  word-wrap: break-word; /* Ensures long words break into the next line */
+  white-space: pre-wrap; /* Preserves whitespace and line breaks */
+  color: #000000;
+}
+
+.left-container {
+  flex: 1;
+  padding: 12px 15px;
+  margin: 20px 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  height: max-content;
+  width: auto; /* Adjust width as necessary */
+  max-width: 300px; /* Optional: set a maximum width */
+  word-wrap: break-word; /* Ensures long words break into the next line */
+  white-space: pre-wrap; /* Preserves whitespace and line breaks */
+  color: #ffffffd1;
+  background-color: #5a5f4ac0;
+
+}
+
+.left-container a{
+  color: #ffffffd1;
+  font-family: monospace;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.left-container a:hover{
+  color: #ffffff5f;
+  font-family: monospace;
+  font-size: 16px;
+}
+
+.left-container img{
+  border-radius: 35px;
+}
+
+.right-container {
+  flex: 3;
+  width: auto;
+  word-wrap: break-word; /* Ensures long words break into the next line */
+  white-space: pre-wrap; /* Preserves whitespace and line breaks */
+  color: #000000;
+  padding: 12px 15px;
+  margin: 20px 10px;
+}
+
+.right-container h1 {
+  word-wrap: break-word; /* Ensures long words break into the next line */
+  white-space: pre-wrap; /* Preserves whitespace and line breaks */
+  color: #435443ec;
+  padding: 12px 15px;
+  margin: 20px 10px;
+}
+
+.top-bar {
+
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+  display: flex;
+  justify-content: space-around; /* Distribute links evenly */
+  align-items: center;
+  padding: 8px 5px;
+  background-color: #5a5f4a; /* Dark background color */
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(67, 46, 46, 0.1); /* Add a subtle shadow */
+  z-index: 1000; /* Ensure the top-bar is on top of the stack */
+}
+
+.top-bar-link {
+  color: #ffffff; /* White text color */
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.top-bar-link:hover {
+  background-color: #4d5142; /* Slightly lighter background on hover */
+  transform: scale(0.9); /* Slightly enlarge the link on hover */
+}
+
+.top-bar-link:active {
+  background-color: #4d5142; /* Even lighter background when active */
+}
+
+input[type="text"],
+  textarea {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border-color: #ccc;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+
+.articles-grid {     
+  display: grid; /* Use grid layout */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Create a responsive grid with a minimum width */
+  grid-gap: 20px; /* Spacing between grid items */
+  padding: 10px;
+}
+
+
+.grid-item {
+  width: auto; /* Adjust width as necessary */
+  max-width: 300px; /* Optional: set a maximum width */
+  word-wrap: break-word; /* Ensures long words break into the next line */
+  white-space: pre-wrap; /* Preserves whitespace and line breaks */
+  height: max-content;
+  padding: 25px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  text-align: center;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.grid-item:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+  z-index: 10;
+}
+
+
+
+.grid-item h3{
+  margin: 20px;
+  padding: 10px;
+}
+
+.grid-item a{
+  color: #5a5f4a;
+  text-decoration: none;
+}
+.grid-item a:hover{
+  color: #444739;
+  text-decoration: none;
+}
+
+.grid-item button {
+  background-color: #ffffff;
+  color: #494949;
+  width: fit-content;
+  margin: 15px;
+
+}
+
+.grid-item button:hover {
+  background-color: #f7f7f7;
+
+}
+
+.grid-item button img {
+  width: 25px;
+  height: 25px;
+}
+
+.grid-item img{
+  width: 80%;
+}
