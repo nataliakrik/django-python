@@ -1,21 +1,33 @@
-.form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 5px auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
-  }
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px; /* Added padding to prevent form from touching the edges */
+  background-color:  rgba(128, 128, 128, 0.571); 
+}
 
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%; /* Ensures form uses full width on small screens */
+  background-color: #ffffffb4;
+}
   
   
   .form-input {
+    flex: 1;
     width: 90%;
     padding: 10px;
-    margin: 10px 0;
+    margin: 10px auto;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -24,12 +36,36 @@
     background-color: #ffffff;
   }
 
+  .form-file-container {
+    width: 90%;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .form-label {
+    margin-bottom: 5px;
+    color: #000;
+  }
+  
+  .form-file-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    width: 100%; /* Match the width of other inputs */
+    box-sizing: border-box;
+  }
+  
   
   .form-button {
+    flex: 1;
     width: 95%;
+    font-size: 17px;
     padding: 10px;
-    margin: 20px 0;
-    background-color: #007bff;
+    margin: 20px auto;
+    background-color: #393939;
     color: white;
     border: none;
     border-radius: 4px;
@@ -38,12 +74,12 @@
   }
   
   .form-button:hover {
-    background-color: #0056b3;
+    background-color: #1b4169;
   }
 
 
 .error-message {
   margin-top: 15px;
-  color: red;
+  color: rgb(174, 174, 174);
   text-align: center;
 }

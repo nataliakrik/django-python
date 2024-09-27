@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Navigate } from 'react-router-dom'; 
 import api from "../api"; 
 //import Note from '../components/Note'
-import "../styles/Note.css"
+import "../styles/Home.css"
 //import "./Profile.css"
 import red_heart from "../assets/red_heart.png"
 import black_heart from "../assets/black_heart.png"
@@ -142,7 +142,8 @@ function Home(){
         return <div>Error: {error}</div>;
     }
     
-    return <div className="home">
+    return (
+    <div className="home">
         <div className="top-bar"> 
             <Link to ="/home" className="top-bar-link">Home page</Link>
             <Link to ="/jobs" className="top-bar-link">Jobs</Link>
@@ -152,7 +153,8 @@ function Home(){
             <Link to ="/profile" className="top-bar-link">Profile</Link>
             <Link to ="/settings" className="top-bar-link">Settings</Link>
         </div>
-        <h2>Home</h2>
+        <br />
+        <br />
 
         <div className="home-container">
             
@@ -169,7 +171,7 @@ function Home(){
                                 style={{ width: '100px', height: '100px' }}
                                 />
                             <br /> <br />
-                            <Link to="/profile">{user.username}</Link>
+                            <Link to="/profile">@{user.username}</Link>
                             {/* <span style={{ color: 'black' }}> {user.username}</span> */}
                     </li>
                     )}
@@ -179,7 +181,7 @@ function Home(){
                 <Link to="/postarticle">Post a article</Link>
             </div>
             <div className="right-container">
-                <h1>Articles</h1>
+                <h1>Articles For You</h1>
                 <div className="articles-grid">
                     {articles.length > 0 ? (
                         articles.map(article => (
@@ -212,7 +214,8 @@ function Home(){
 
 
 
-    </div>;
+    </div>
+    )
 }
 
 export default Home

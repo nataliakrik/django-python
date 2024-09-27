@@ -163,6 +163,7 @@ function ReadArticle() {
                 {!(article.image === 'http://127.0.0.1:8000/media/null') && <img src={article.image} alt={article.title} />}
                 <p>{article.content}</p>
                 <p>{article.likes.length} likes</p>
+                <p>The author of this article is user {article.author}</p>
                 <div className='Comment-section'>
                     <h2>Comments:</h2>
                     {comments.length > 0 ? (

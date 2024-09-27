@@ -1,59 +1,130 @@
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import api from '../api';
+import { Link } from 'react-router-dom';
+import '../styles/notifications.css';
 
 function Notifications() {
-  // fetch from api:
-  // ολα τα αιτηματα συνδεσης, τα αρθρα που εγιναν like
-  // , απο ποιον, τα αρθρα που εγιναν comment, απο ποιον
-  // + ποιο ειναι το comment
+    const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [refresh , setRefresh] = useState(false);
+    const token = localStorage.getItem('access'); // Token for API calls
 
-  return (
-    <div>
-      <div className="top-bar">
-        <Link to="/home" className="top-bar-link">
-          Home page
-        </Link>
-        <Link to="/jobs" className="top-bar-link">
-          Jobs
-        </Link>
-        <Link to="/messages" className="top-bar-link">
-          Messages
-        </Link>
-        <Link to="/mynetwork" className="top-bar-link">
-          My Network
-        </Link>
-        <Link to="/notifications" className="top-bar-link">
-          Notifications
-        </Link>
-        <Link to="/profile" className="top-bar-link">
-          Profile
-        </Link>
-        <Link to="/settings" className="top-bar-link">
-          Settings
-        </Link>
-      </div>
-      <h1 className="center">Notifications</h1>
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await api.get('/api/notifications/', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setNotifications(response.data);
+                console.log(response.data)
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+                setError('Failed to fetch notifications');
+                setLoading(false);
+            }
+        };
+        fetchNotifications();
+    }, [token , refresh]);
 
-      {/* Το front εκτυπωνει:
-        -(πανω μερος της σελιδας) 
-        τα αιτηματα συνδεσης αλλων χρηστων + συνδεσμοι για προφιλ
-        -(κατω μερος της σελιδας)
-        likes, comments  σε αρθρα */}
+    const handleDecision = async (notification, decision) => {
+        try {
+            const formData = new FormData();
+            formData.append("decision", decision);
+            formData.append("type_id", notification.type_id);
+            formData.append("notification_id", notification.id);
+            console.log(decision)
+            console.log( notification.type_id)
+            console.log( formData)
 
-      {/* πανω μερος σελιδας-αιτησεις αλλων χρηστων */}
-      <div>
-        <h2>Friend requests:</h2>
-        <ul>
-          <li>
-            <Link to="/otherprofile">name1:</Link> accept / deny
-          </li>
-          <li>name2:</li>
-        </ul>
-      </div>
+            const response = await api.post('/api/notifications/',  formData , {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            console.log(response.data);
+            setRefresh(!refresh)
+        } catch (error) {
+            console.error('Error processing notification:', error);
+        }
+    };
 
-      {/*κατω μερος σελιδας-likes, comments*/}
-      <div></div>
-    </div>
-  );
+    const handleRemove = async (notification_id) => {
+        try {
+            const params = notification_id ? { notification_id: notification_id } : {};
+            const response = await api.delete('/api/notifications/', {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { notification_id: params }
+            });
+            console.log(response.data);
+            setRefresh(!refresh)
+        } catch (error) {
+            console.error('Error deleting notification:', error);
+        }
+    }
+    if (loading) {
+        return <div>Loading notifications...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    return (
+        <div className="notifications-page">
+            <div className="top-bar">          
+                <Link to ="/home" className="top-bar-link">Home page</Link>
+                <Link to ="/jobs" className="top-bar-link">Jobs</Link>
+                <Link to ="/messages" className="top-bar-link">Messages</Link>
+                <Link to ="/mynetwork" className="top-bar-link">My Network</Link>
+                <Link to ="/notifications" className="top-bar-link">Notifications</Link>
+                <Link to ="/profile" className="top-bar-link">Profile</Link>
+                <Link to ="/settings" className="top-bar-link">Settings</Link>
+            </div>
+
+            <h1>Notifications</h1>
+
+            <div className="connection-requests">
+                <h2>Connection Requests</h2>
+                {notifications.filter(notif => notif.type === 'follow_request').length > 0 ? (
+                    <ul>
+                        {notifications.filter(notif => notif.type === 'follow_request').map(notification => (
+                            <li key={notification.id}>
+                                <p>User {notification.type_id} wants to connect</p>
+                                <button onClick={() => handleDecision(notification, 'accept')}>Accept</button>
+                                <button onClick={() => handleDecision(notification, 'deny')}>Deny</button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No connection requests</p>
+                )}
+            </div>
+
+            <div className="article-notifications">
+                <h2>Article Notifications</h2>
+                {notifications.filter(notif => notif.type === 'new_comment' || notif.type === 'new_like' ).length > 0 ? (
+                    <ul>
+                        {notifications.filter(notif => notif.type === 'new_comment' || notif.type === 'new_like').map(notification => (
+                            <li key={notification.id}>
+                                <p>User {notification.type_id} showed interest in your article.</p>
+                                <button onClick={() => handleRemove(notification.id)}>Remove</button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No article notifications</p>
+                )}
+            </div>
+            {notifications.length > 0 ?
+            (
+                <button onClick={() => handleRemove(null)}>clear all notifications</button>
+            ):(
+                null
+            )
+            }
+            
+        </div>
+    );
 }
 
 export default Notifications;
