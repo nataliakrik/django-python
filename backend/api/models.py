@@ -15,7 +15,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"From {self.sender} at {self.created_at}"
-"""
+    
+
 class Jobs(models.Model):
     FULL_TIME = 'full_time'
     PART_TIME = 'part_time'
@@ -24,18 +25,26 @@ class Jobs(models.Model):
         (FULL_TIME , 'full time job'),
         (PART_TIME , 'part time job'),
     ]
-
+    # job title
     title = models.CharField(max_length=100 , unique=True)
+    # user who created the job offer
     job_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="jobs")
+    # the company of the job 
     company = models.TextField()
+    # location
     location = models.TextField()
+    # time the job was created
     created_at = models.DateTimeField(auto_now_add=True)
+    # full time or part time job
     job_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    # job qualifications
     requested_skills = models.TextField()
     requested_education = models.TextField()
+    # general information about the job 
     general_information = models.TextField()
-    applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, symmetrical=False, related_name='jobs', blank=True) 
-"""
+    # a list of users who applied for this job
+    applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, symmetrical=False, related_name='job_aplicants', blank=True) 
+
 
 # Article model as before
 class Article(models.Model):
@@ -99,10 +108,12 @@ class ExtendedUser(AbstractUser):
     my_articles = models.ManyToManyField(Article, symmetrical=False, related_name='Articles_by_user', blank=True)
     # A list of all the articles the user liked
     liked_articles = models.ManyToManyField(Article, symmetrical=False, related_name='liked', blank=True)
-    # A list of all the private articles that are shared with you
-    shared_articles = models.ManyToManyField(Article, symmetrical=False, related_name='shared', blank=True)
     # A list for users notifications
     notifications = models.ManyToManyField(Notifications, symmetrical=False, related_name='notifications', blank=True)
+    # A list of jobs that user published
+    my_jobs = models.ManyToManyField(Jobs, symmetrical=False, related_name='Jobs_by_user', blank=True)
+    # A list of jobs the user has aplied
+    applications = models.ManyToManyField(Jobs, symmetrical=False, related_name='applications', blank=True)
 # change the line in the notes class to this
 # author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes")
 

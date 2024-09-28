@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import api from "../api"
 
 function PostJob() {
   const navigate = useNavigate();
@@ -7,22 +8,27 @@ function PostJob() {
     const obj = {
       job_title: e.target.elements.job_title.value,
       company: e.target.elements.company.value,
-      workplace_type: e.target.elements.workplace_type.value,
+      requested_skills: e.target.elements.requested_skills.value,
       location: e.target.elements.location.value,
       job_type: e.target.elements.job_type.value,
       general_information: e.target.elements.general_information.value,
+      requested_education: e.target.elements.requested_education.value,
     };
     // api call (POST method)
-    const response = await fetch("api_endpoint", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(obj),
-    });
-    // check if its ok
-    if (!response.ok) {
-      alert("something is wrong");
-    } else {
-      navigate("/jobs");
+    try {
+      const response = await api.post("api/jobs/", obj, {
+        headers: { "Content-Type": "application/json" },
+      });
+  
+      // If the response is successful (status code 200)
+      if (response.status === 200 || response.status === 201) {
+        console.log(response.data); // Optional: log the response to the console
+        navigate("/jobs");
+      }
+    } catch (error) {
+      // If the API call failed, you can inspect the error and alert the user
+      console.error(error);
+      alert("Something went wrong. Please try again.");
     }
     e.target.reset();
   };
@@ -33,6 +39,8 @@ function PostJob() {
   //   -location
   //   -job_type (full/part time)
   //   -general_information (all the 6 text type)
+  //   -requested_skills
+  //   -requested_education
 
   return (
     <div>
@@ -46,9 +54,9 @@ function PostJob() {
         <br />
         <input type="text" id="second" name="company" required />
         <br />
-        <label htmlFor="third">Workplace type:</label>
+        <label htmlFor="third">Requested Skills:</label>
         <br />
-        <input type="text" id="third" name="workplace_type" required />
+        <input type="text" id="third" name="requested_skills" required />
         <br />
         <label htmlFor="forth">Location:</label>
         <br />
@@ -56,7 +64,10 @@ function PostJob() {
         <br />
         <label htmlFor="fifth">Job type:</label>
         <br />
-        <input type="text" id="fifth" name="job_type" required />
+        <select id="job_type" name="job_type" required>
+          <option value="full_time">Full-Time</option>
+          <option value="part_time">Part-Time</option>
+        </select>
         <br />
         <label htmlFor="sixth">General Information:</label> <br />
         <input
@@ -64,7 +75,12 @@ function PostJob() {
           id="sixth"
           name="general_information"
           required
-        />{" "}
+        />
+        <br />
+        <label htmlFor="seventh">Requested Education:</label>
+        <br />
+        <input type="text" id="seventh" name="requested_education" required />
+        <br />{" "}
         <br />
         <button type="submit">Post Your Job</button>
       </form>
