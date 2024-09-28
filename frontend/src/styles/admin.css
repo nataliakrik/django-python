@@ -29,20 +29,24 @@
     padding: 12px 15px;
     margin: 20px auto;
 }
-.buttons button {
-    flex: 1;
-    background-color: #444739;
+.buttons  button{
+    background-color: #6a816b3d;
     color: #435443ec;
     padding: 12px 15px;
-    margin: 20px auto;
+    margin: 20px 10px;
     transition: background-color 0.3s, transform 0.3s;
 }
 
-.buttons button {
-    background-color: #36382f;
+.buttons button:hover {
+    background-color: #40513f39;
     transform: scale(0.9); /* Slightly enlarge the link on hover */
 }
 
+/*////////////////////////////////////////////*/
+.input {
+    flex: 1;
+    text-align: center;
+}
 .user{
     flex: 1;
     display: flex;
@@ -61,7 +65,6 @@
 .first-line {
     flex: 1;
     display: flex;
-    flex-direction: column;
     padding: 12px 15px;
     margin: 20px 10px;
     border: 1px solid #ccc;
@@ -74,7 +77,6 @@
 .second-line {
     flex: 1;
     display: flex;
-    flex-direction: column;
     padding: 12px 15px;
     margin: 20px 10px;
     border: 1px solid #ccc;
@@ -84,6 +86,11 @@
     color: #ffffffd1;
     background-color: #5a5f4ac0;
 }
+
+/*////////////////////////////////////////////*/
+/*//////FIRST LINE ///////*/
+
+
 .user-bio{
     flex: 1;
     padding: 12px 15px;
@@ -95,20 +102,8 @@
     color: #ffffffd1;
     background-color: #5a5f4ac0;
 }
-.user-info{
-    flex: 1;
-    padding: 12px 15px;
-    margin: 20px 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    height: max-content;
-    width: auto; /* Adjust width as necessary */
-    max-width: 300px; /* Optional: set a maximum width */
-    word-wrap: break-word; /* Ensures long words break into the next line */
-    white-space: pre-wrap; /* Preserves whitespace and line breaks */
-    color: #ffffffd1;
-    background-color: #5a5f4ac0;
-}
+
+
 .users-articles{
     flex: 3;
     overflow-x: scroll;
@@ -211,4 +206,93 @@
     white-space: pre-wrap; /* Preserves whitespace and line breaks */
     color: #ffffffd1;
     background-color: #5a5f4ac0;
+}
+
+
+
+/*////////////////////////////////////////////*/
+/*/////////// SECOND  LINE //////////////////*/
+
+
+.user-info{
+    flex: 1;
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+
+.users-comments {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    white-space: nowrap;
+    margin: auto 15px;
+    border: 2px outset #3739301f;
+    border-radius: 10px;
+    align-items: center;
+    scrollbar-color: #5a5f4ac0 #3a3b36c0;
+    scrollbar-width: thin;
+    scrollbar-gutter: inherit;
+    max-height: 300px; /* Set a maximum height to enable scrolling */
+}
+
+.comment {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+
+
+.user-likes {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    white-space: nowrap;
+    margin: auto 15px;
+    border: 2px outset #3739301f;
+    border-radius: 10px;
+    align-items: center;
+    scrollbar-color: #5a5f4ac0 #3a3b36c0;
+    scrollbar-width: thin;
+    scrollbar-gutter:inherit ;
+  
+    .like {
+      display: inline-block;
+    }
+}
+.like {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
 }

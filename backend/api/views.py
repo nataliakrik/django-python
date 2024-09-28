@@ -126,8 +126,8 @@ class UserListView(APIView):
             },
             "my_articles": [{"id": article.id, "title": article.title,"image": request.build_absolute_uri(article.image.url) if article.image else None , "created_at": article.created_at} for article in user.my_articles.all()],
             "liked_articles": [{"id": article.id, "title": article.title, "created_at": article.created_at} for article in user.liked_articles.all()],
-            "my_comments": [{"id": comment.id, "title": comment.title, "article_id": comment.article_id, "created_at": comment.created_at} for comment in user.my_comments.all()],
-            "my_jobs": [{"id": job.id, "title": job.title, "created_at": job.created_at} for job in user.my_jobs.all()],
+            "my_comments": [{"id": comment.id, "content": comment.content, "article_id": comment.article_id, "created_at": comment.created_at} for comment in user.my_comments.all()],
+            "my_jobs": [{"id": job.id, "title": job.title, "general_information": job.general_information} for job in user.my_jobs.all()],
             "follows": [{"id": follow.id, "username": follow.username, "email": follow.email} for follow in user.follows.all()],
             "follows": [{"id": follower.id, "username": follower.username, "email": follower.email} for follower in user.follower.all()],
         }for user in users]
@@ -180,8 +180,8 @@ class UserInfo(APIView):
             },
             "my_articles": [{"id": article.id, "title": article.title,"image": request.build_absolute_uri(article.image.url) if article.image else None , "created_at": article.created_at} for article in user.my_articles.all()],
             "liked_articles": [{"id": article.id, "title": article.title, "created_at": article.created_at} for article in user.liked_articles.all()],
-            "my_comments": [{"id": comment.id, "title": comment.title, "article_id": comment.article_id, "created_at": comment.created_at} for comment in user.my_comments.all()],
-            "my_jobs": [{"id": job.id, "title": job.title, "created_at": job.created_at} for job in user.my_jobs.all()],
+            "my_comments": [{"id": comment.id, "content": comment.content, "article_id": comment.article_id, "created_at": comment.created_at} for comment in user.my_comments.all()],
+            "my_jobs": [{"id": job.id, "title": job.title, "general_information": job.general_information} for job in user.my_jobs.all()],
             "follows": [{"id": follow.id, "username": follow.username, "email": follow.email} for follow in user.follows.all()],
             "follows": [{"id": follower.id, "username": follower.username, "email": follower.email} for follower in user.follower.all()],
         }
@@ -730,7 +730,7 @@ class Commenting(APIView):
                 notification = Notifications.objects.create(type="new_comment" , type_id=author_id)
                 article_author.notifications.add(notification)
             
-            comment_author.add(new_comment)
+            comment_author.my_comments.add(new_comment)
             article.comments.add(new_comment)
             return Response("Comment was uploaded", status=status.HTTP_200_OK)
         except ExtendedUser.DoesNotExist:

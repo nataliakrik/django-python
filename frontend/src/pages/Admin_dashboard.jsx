@@ -115,27 +115,25 @@ function Admin_dashboard() {
                 <div className='user-list'>
                     {users.map(user => (
                         <div className='user' key={user.id}>
-                            <div className='first-line'>
+                            <div className='input'>
+                                <p>Select user to download data</p>
                                 <input
                                     type="checkbox"
                                     checked={selectedUsers.has(user.id)}
                                     onChange={() => handleCheckboxChange(user.id)}
                                 />
+                            </div>
+                            <div className='first-line'>
                                 <div className='user-bio'>
+                                    <h3>Users information</h3>
                                     {user.username}
                                     <br />
                                     {user.email}
                                     <br />
                                     {user.phone_number}
                                 </div>
-                                <div className='user-info'>
-                                    experience : {user.personal_details.experience}
-                                    <br />
-                                    education : {user.personal_details.education}
-                                    <br />
-                                    skills : {user.personal_details.skills}
-                                </div>
                                 <div className='users-articles'>
+                                    <h3>Users articles</h3>
                                     {user.my_articles.length > 0 ? (
                                         user.my_articles.map(article => (
                                             <div className="article" key={article.title}>
@@ -151,11 +149,12 @@ function Admin_dashboard() {
                                     )}
                                 </div>
                                 <div className='users-jobs'>
+                                    <h3>User jobs</h3>
                                     {user.my_jobs.length > 0 ? (
                                         user.my_jobs.map(job => (
                                             <div className="job" key={job.title}>
                                                 <h3>{job.title}</h3>
-                                                <p>{job.created_at}</p>
+                                                <p>{job.general_information}</p>
                                             </div>
                                         ))
                                     ) : (
@@ -163,26 +162,42 @@ function Admin_dashboard() {
                                     )}
                                 </div>
                             </div>
+                            {/*////// SECOND LINE ///////////*/}
                             <div className='second-line'>
-                                <div className='users-commenrts'>
-                                    {user.my_articles.length > 0 ? (
-                                        user.my_articles.map(article => (
-                                            null
-                                        ))
-                                    ) : (
-                                        <p>No articles found</p>
-                                    )}
+                                <div className='user-info'>
+                                    <h3>Users Professional information</h3>
+                                    experience : {user.personal_details.experience}
+                                    <br />
+                                    education : {user.personal_details.education}
+                                    <br />
+                                    skills : {user.personal_details.skills}
                                 </div>
-                                <div className='user-likes'>
-                                    {user.liked_articles.length > 0 ? (
-                                        user.liked_articles.map(like => (
-                                            <div className="job" key={like.id}>
-                                                <h3>{like.title}</h3>
-                                                <p>{like.created_at}</p>
+                                <div className='users-comments'>
+                                    <h3>Users comments</h3>
+                                    {user.my_comments.length > 0 ? (
+                                        user.my_comments.map(comment => (
+                                            <div className="comment" key={comment.id}>
+                                                <p>User {user.username} </p>
+                                                <p>on article {comment.article_id} commented:</p>
+                                                <p>{comment.content}</p>
                                             </div>
                                         ))
                                     ) : (
-                                        <p>No jobs found</p>
+                                        <p>User has no comments</p>
+                                    )}
+                                </div>
+                                <div className='user-likes'>
+                                    <h3>Users likes</h3>
+                                    {user.liked_articles.length > 0 ? (
+                                        user.liked_articles.map(like => (
+                                            <div className="like" key={like.id}>
+                                                <p>User {user.username} </p>
+                                                <p>liked article with title </p>
+                                                <h3>{like.title} </h3>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>User did not like any articles</p>
                                     )}
                                 </div>
                             </div>
