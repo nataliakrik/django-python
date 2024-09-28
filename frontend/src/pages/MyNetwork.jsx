@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 import { Link } from "react-router-dom";
 import "../styles/myNetwork.css";
+import "../styles/Home.css";
 
 function MyNetwork() {
   const [currentUser, setCurrentUser] = useState([]); // get current users id
@@ -141,7 +142,7 @@ function MyNetwork() {
   }, [searchTerm, users]);
 
   return (
-    <div>
+    <div className="home">
       <div className="top-bar">
         <Link to="/home" className="top-bar-link">
           Home page
