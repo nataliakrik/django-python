@@ -20,7 +20,7 @@ function PostArticle() {
                 const response = await api.get('api/usernameAndPhoto/', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                const usersData = response.data[0];
+                const usersData = response.data;
                 setUser(usersData);
                 console.log(user)
                 setLoading(false);  // Stop loading

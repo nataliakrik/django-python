@@ -20,10 +20,12 @@ function Home(){
         const fetch_Username_photo = async () => {
             try {
                 // calling api.get with 'api/usernameAndPhoto/' path and the token authorization to gain access to the id of the current user and send it to the article
-                const response = await api.get('api/usernameAndPhoto/', {headers: {Authorization: `Bearer ${token}`,},});
+                const response = await api.get('api/usernameAndPhoto/',{
+                    headers: {Authorization: `Bearer ${token}`,}
+                });
 
                 // saving the response data
-                const usersData = response.data[0];
+                const usersData = response.data;
                 setUser(usersData);
                 setLoading(false);  // Stop loading
             } catch (error) {

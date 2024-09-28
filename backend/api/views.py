@@ -126,6 +126,7 @@ class UserListView(APIView):
             },
             "my_articles": [{"id": article.id, "title": article.title,"image": request.build_absolute_uri(article.image.url) if article.image else None , "created_at": article.created_at} for article in user.my_articles.all()],
             "liked_articles": [{"id": article.id, "title": article.title, "created_at": article.created_at} for article in user.liked_articles.all()],
+            "my_comments": [{"id": comment.id, "title": comment.title, "article_id": comment.article_id, "created_at": comment.created_at} for comment in user.my_comments.all()],
             "my_jobs": [{"id": job.id, "title": job.title, "created_at": job.created_at} for job in user.my_jobs.all()],
             "follows": [{"id": follow.id, "username": follow.username, "email": follow.email} for follow in user.follows.all()],
             "follows": [{"id": follower.id, "username": follower.username, "email": follower.email} for follower in user.follower.all()],
@@ -151,13 +152,42 @@ class UserInfo(APIView):
 
     # Get user info and photo profile of the authenticated user
     def get(self, request):
-        user_data = ExtendedUser.objects.filter(id=request.user.id).values('id', 'username', 'profile_picture','email', 'phone_number', 'my_articles')
-        for user in user_data:
-            if user['profile_picture']:
-                # REturn the full path for the image 
-                user['profile_picture'] = request.build_absolute_uri(settings.MEDIA_URL + user['profile_picture'])
+        user_id = request.query_params.get("user_id") 
+        # if we passed user_id get that users info otherwise get current users info
+        if user_id:
+            user = ExtendedUser.objects.get(id=user_id)
+        else:
+            user= request.user
+
+
+        if user.profile_picture:
+            # Return the full path for the image by accessing the `url` attribute
+            profile_picture_url = request.build_absolute_uri(user.profile_picture.url)
+        else:
+            profile_picture_url = None
+        
+        # Prepare the user data response (you can customize as needed)
+        serialized_user= {
+            "id": user.id,
+            "username": user.username,
+            "email":user.email,
+            "phone_number":user.phone_number,
+            "profile_picture":profile_picture_url,
+            "personal_details": {
+                "experience": user.personal_details.experience if user.personal_details else "",
+                "education": user.personal_details.education if user.personal_details else "",
+                "skills": user.personal_details.skills if user.personal_details else "",
+            },
+            "my_articles": [{"id": article.id, "title": article.title,"image": request.build_absolute_uri(article.image.url) if article.image else None , "created_at": article.created_at} for article in user.my_articles.all()],
+            "liked_articles": [{"id": article.id, "title": article.title, "created_at": article.created_at} for article in user.liked_articles.all()],
+            "my_comments": [{"id": comment.id, "title": comment.title, "article_id": comment.article_id, "created_at": comment.created_at} for comment in user.my_comments.all()],
+            "my_jobs": [{"id": job.id, "title": job.title, "created_at": job.created_at} for job in user.my_jobs.all()],
+            "follows": [{"id": follow.id, "username": follow.username, "email": follow.email} for follow in user.follows.all()],
+            "follows": [{"id": follower.id, "username": follower.username, "email": follower.email} for follower in user.follower.all()],
+        }
+
         # Send back information
-        return Response(user_data)
+        return Response(serialized_user)
 
     # change email and password for current user
     def put(self, request):
@@ -664,6 +694,7 @@ class Commenting(APIView):
                     "sender": comment.sender.username, 
                     "sender_id": comment.sender.id,
                     "content": comment.content,
+                    "article_id": comment.article_id,
                     "created_at": comment.created_at
                 } 
                 for comment in article_comments
@@ -687,7 +718,7 @@ class Commenting(APIView):
             comment_author = ExtendedUser.objects.get(id=author_id)
 
             # Create a new comment object and associate it with the article
-            new_comment = Comment.objects.create(sender=comment_author, content=comment_content)
+            new_comment = Comment.objects.create(sender=comment_author, content=comment_content, article_id=article_id)
 
             # Add notification about comment on the authors notification list as new_comment
             article_author = article.author
@@ -698,7 +729,8 @@ class Commenting(APIView):
                 print(article_author.id , author_id)
                 notification = Notifications.objects.create(type="new_comment" , type_id=author_id)
                 article_author.notifications.add(notification)
-
+            
+            comment_author.add(new_comment)
             article.comments.add(new_comment)
             return Response("Comment was uploaded", status=status.HTTP_200_OK)
         except ExtendedUser.DoesNotExist:

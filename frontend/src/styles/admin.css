@@ -22,9 +22,33 @@
     margin: 20px auto;
 }
 
+.buttons {
+    flex: 1;
+    display: flex;
+    color: #435443ec;
+    padding: 12px 15px;
+    margin: 20px auto;
+}
+.buttons button {
+    flex: 1;
+    background-color: #444739;
+    color: #435443ec;
+    padding: 12px 15px;
+    margin: 20px auto;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.buttons button {
+    background-color: #36382f;
+    transform: scale(0.9); /* Slightly enlarge the link on hover */
+}
+
 .user{
     flex: 1;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 12px 15px;
     margin: 20px 10px;
     border: 1px solid #ccc;
@@ -34,7 +58,32 @@
     color: #ffffffd1;
     background-color: #5a5f4ac0;
 }
-
+.first-line {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+.second-line {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
 .user-bio{
     flex: 1;
     padding: 12px 15px;

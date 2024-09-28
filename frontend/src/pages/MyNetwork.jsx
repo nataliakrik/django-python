@@ -41,7 +41,7 @@ function MyNetwork() {
         const response = await api.get("api/usernameAndPhoto/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const usersData = response.data[0];
+        const usersData = response.data;
         setCurrentUser(usersData);
         setLoading(false); // Stop loading
       } catch (error) {

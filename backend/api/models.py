@@ -12,7 +12,8 @@ class Comment(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sent_comments", on_delete=models.CASCADE)  # Changed related_name
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-
+    # the id of the article that the comment was made in
+    article_id = models.IntegerField()
     def __str__(self):
         return f"From {self.sender} at {self.created_at}"
     
@@ -108,14 +109,14 @@ class ExtendedUser(AbstractUser):
     my_articles = models.ManyToManyField(Article, symmetrical=False, related_name='Articles_by_user', blank=True)
     # A list of all the articles the user liked
     liked_articles = models.ManyToManyField(Article, symmetrical=False, related_name='liked', blank=True)
+    # A list of all the comments the user made
+    my_comments = models.ManyToManyField(Comment, symmetrical=False, related_name='comments_by_user', blank=True)
     # A list for users notifications
     notifications = models.ManyToManyField(Notifications, symmetrical=False, related_name='notifications', blank=True)
     # A list of jobs that user published
     my_jobs = models.ManyToManyField(Jobs, symmetrical=False, related_name='Jobs_by_user', blank=True)
     # A list of jobs the user has aplied
     applications = models.ManyToManyField(Jobs, symmetrical=False, related_name='applications', blank=True)
-# change the line in the notes class to this
-# author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes")
 
 #"""
 
