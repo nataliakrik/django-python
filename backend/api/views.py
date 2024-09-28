@@ -199,16 +199,25 @@ class AddPersonalDetails(APIView):
         education_public = request.data.get("education_public", "false").lower() == "true"
         skills_public = request.data.get("skills_public", "false").lower() == "true"
         
-        details = PersonalDetails.objects.create(experience= experience ,education= education , skills= skills, isExperiencePublic= experience_public, isEducationPublic= education_public , isSkillsPublic= skills_public )
+        
         user = request.user
-        if user.personal_details == None:
-            user.personal_details=details
+        # If the user already has personal details, update them
+        if user.personal_details != None:
+            details = user.personal_details
+            details.experience = experience
+            details.education = education
+            details.skills = skills
+            details.isExperiencePublic = experience_public
+            details.isEducationPublic = education_public
+            details.isSkillsPublic = skills_public
+            details.save()  # Save updates to the same instance
         else:
-            old_details = user.personal_details
-            old_details.delete()
-            user.personal_details=details
+            # If no personal details exist, create a new instance
+            details = PersonalDetails.objects.create(experience= experience ,education= education , skills= skills, isExperiencePublic= experience_public, isEducationPublic= education_public , isSkillsPublic= skills_public )
+            user.personal_details = details
 
         user.save()
+
         return Response({"article": "Article was created successfully"}, status=status.HTTP_201_CREATED)
 
 
@@ -707,85 +716,89 @@ class Commenting(APIView):
 ##########################################################################################################
 
 class Job_offers(APIView):
-    permission_classes=[IsAuthenticated]
-    # get a list of jobs for current user
-    def get(self , request):
-        # return all jobs
-        user_id = request.data.get("user_id")
-        # if user_id exists we return user_id uploaded jobs
-        if user_id :
-            user = ExtendedUser.objects.get(id=user_id)
-            jobs =  user.my_jobs.all()
-            serialized_jobs = [
-                {
-                "title": job.title,
-                "job_creator": {
-                        "id": job.job_creator.id,
-                        "username": job.job_creator.username,  # Or any field you prefer
-                        "email": job.job_creator.email,
-                    },
-                "company": job.company,
-                "location": job.location,
-                "created_at": job.created_at,
-                "job_type": job.job_type,
-                "requested_skills": job.requested_skills,
-                "requested_education": job.requested_education,
-                "general_information": job.general_information,
-                "applicants": [applicant.username for applicant in job.applicants.all()],  # Assuming applicants is a ManyToManyField
-                } 
-                for job in jobs
-            ]
-            return Response(serialized_jobs , status=status.HTTP_200_OK)
-        # in this case we return all the job offers for the user
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_id = request.query_params.get("user_id")  # Use query_params for GET request
+        print(user_id)
+
+        if user_id:
+            try:
+                user = ExtendedUser.objects.get(id=user_id)
+                jobs = user.my_jobs.all()
+                serialized_jobs = [
+                    {
+                        "title": job.title,
+                        "job_creator": {
+                            "id": job.job_creator.id,
+                            "username": job.job_creator.username,
+                            "email": job.job_creator.email,
+                        },
+                        "company": job.company,
+                        "location": job.location,
+                        "created_at": job.created_at,
+                        "job_type": job.job_type,
+                        "requested_skills": job.requested_skills,
+                        "requested_education": job.requested_education,
+                        "general_information": job.general_information,
+                        "applicants": [applicant.username for applicant in job.applicants.all()],
+                    }
+                    for job in jobs
+                ]
+                return Response(serialized_jobs, status=status.HTTP_200_OK)
+            except ExtendedUser.DoesNotExist:
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # If no user_id provided, proceed with other logic or return a default response
         else:
-            # We return a list of all jobs filtered in an order according to user skills
-            jobs =  Jobs.objects.all()
+            # If no user_id is provided, return a list of jobs filtered by user's skills
             user = request.user
-
             if user.personal_details:
+                jobs = Jobs.objects.all()
                 user_skills = user.personal_details.skills
-
-                if user_skills: 
-
-                    calculated_jobs =[]
-                    # Create a list to iterate and search all the words for matches with jobs
+                if user_skills:
+                    calculated_jobs = []
                     user_skills_list = re.findall(r'\b\w+\b', user_skills.lower())
-                    print(user_skills_list)
                     for job in jobs:
-                        job_skills_list = re.findall(r'\b\w+\b', job.requested_skills.lower())
-                        print(job_skills_list)
-                        match_count = sum(1 for skill in user_skills_list if skill in job_skills_list)
-                        
-                        # Does not add field to database it just for the calculated_jobs
+                        match_count = sum(1 for skill in user_skills_list if skill in job.requested_skills.lower())
                         job.match_count = match_count
                         calculated_jobs.append(job)
-                    # bring back the sorted list to jobs for serialization
-                    jobs = sorted(calculated_jobs , key=lambda job: job.match_count, reverse=True)
-                
-                        
+                    jobs = sorted(calculated_jobs, key=lambda job: job.match_count, reverse=True)
 
-            # the final list shall be replaced with jobs to be serialized
+            # Serialize and return the final list of jobs
             serialized_jobs = [
                 {
-                "id":job.id,
-                "title": job.title,
-                "job_creator": {
+                    "id": job.id,
+                    "title": job.title,
+                    "job_creator": {
                         "id": job.job_creator.id,
-                        "username": job.job_creator.username,  # Or any field you prefer
+                        "username": job.job_creator.username,
                         "email": job.job_creator.email,
                     },
-                "company": job.company,
-                "location": job.location,
-                "created_at": job.created_at,
-                "job_type": job.job_type,
-                "requested_skills": job.requested_skills,
-                "requested_education": job.requested_education,
-                "general_information": job.general_information,
-                "applicants": [applicant.username for applicant in job.applicants.all()],  # Assuming applicants is a ManyToManyField
-                } 
+                    "company": job.company,
+                    "location": job.location,
+                    "created_at": job.created_at,
+                    "job_type": job.job_type,
+                    "requested_skills": job.requested_skills,
+                    "requested_education": job.requested_education,
+                    "general_information": job.general_information,
+                    "applicants": [
+                        {
+                            "id": applicant.id,
+                            "username": applicant.username,
+                            "email": applicant.email,
+                        }
+                        for applicant in job.applicants.all()
+                    ],
+                }
                 for job in jobs
             ]
-            return Response(serialized_jobs , status=status.HTTP_200_OK)
+            print(len(serialized_jobs))
+            return Response(serialized_jobs, status=status.HTTP_200_OK)
+
+        # Fallback in case no response is returned
+        return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
+
        
     # Creating a new job
     def post(self , request ):

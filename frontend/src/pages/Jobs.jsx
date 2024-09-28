@@ -11,8 +11,8 @@ function Jobs() {
   useEffect(() => {
     const GetTheJobs = async () => {
       try {
-        const response = await api.get("api/jobs/",{
-          user_id: null
+        const response = await api.get('api/jobs/',{
+          params: { user_id: null }, // Pass user_id as a query parameter
         },{
           headers: { Authorization: `Bearer ${token}` },
         });

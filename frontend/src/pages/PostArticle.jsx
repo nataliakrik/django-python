@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 import api from "../api"; 
-import "../styles/Note.css"; 
+import "../styles/Home.css"; 
 
 function PostArticle() {
     const [title, setTitle] = useState("");
