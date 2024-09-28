@@ -3,6 +3,8 @@ import { useState } from "react";
 import "../styles/settings.css";
 import { Link } from 'react-router-dom';
 import api from "../api";
+import "../styles/Home.css"
+
 
 function Settings() {
   const [message, setMessage] = useState("");
@@ -44,7 +46,7 @@ function Settings() {
   }
 
   return (
-    <div>
+    <div className="home">
       <div className="top-bar">          
         <Link to="/home" className="top-bar-link">Home page</Link>
         <Link to="/jobs" className="top-bar-link">Jobs</Link>
