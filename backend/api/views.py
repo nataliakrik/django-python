@@ -10,10 +10,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+import re
 
 
 # For new user model
-from .models import ExtendedUser , Message , Article , Comment , PersonalDetails , Notifications
+from .models import ExtendedUser , Message , Article , Comment , PersonalDetails , Notifications , Jobs
 from .serializers import CustomUserSerializer, NoteSerializer
 from rest_framework.decorators import api_view
 from django.db.models import Q
@@ -409,6 +410,8 @@ class NotificationView(APIView):
         except ExtendedUser.DoesNotExist:
             # if the try failed there are no users being followed by the user_id
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    # if the notification id is empty it removes all notifications 
+    # if the notification id is not empty we remove that notification 
     def delete(self , request):
         try:
             notification_id = request.query_params.get("notification_id")
@@ -694,7 +697,7 @@ class Commenting(APIView):
 
             comment.delete()
         
-            return Response("comment was deleted", status=status.HTTP_200_OK)\
+            return Response("comment was deleted", status=status.HTTP_200_OK)
 
         except Article.DoesNotExist:
             # if the article is not found
@@ -702,3 +705,153 @@ class Commenting(APIView):
 
 
 ##########################################################################################################
+
+class Job_offers(APIView):
+    permission_classes=[IsAuthenticated]
+    # get a list of jobs for current user
+    def get(self , request):
+        # return all jobs
+        user_id = request.data.get("user_id")
+        # if user_id exists we return user_id uploaded jobs
+        if user_id :
+            user = ExtendedUser.objects.get(id=user_id)
+            jobs =  user.my_jobs.all()
+            serialized_jobs = [
+                {
+                "title": job.title,
+                "job_creator": {
+                        "id": job.job_creator.id,
+                        "username": job.job_creator.username,  # Or any field you prefer
+                        "email": job.job_creator.email,
+                    },
+                "company": job.company,
+                "location": job.location,
+                "created_at": job.created_at,
+                "job_type": job.job_type,
+                "requested_skills": job.requested_skills,
+                "requested_education": job.requested_education,
+                "general_information": job.general_information,
+                "applicants": [applicant.username for applicant in job.applicants.all()],  # Assuming applicants is a ManyToManyField
+                } 
+                for job in jobs
+            ]
+            return Response(serialized_jobs , status=status.HTTP_200_OK)
+        # in this case we return all the job offers for the user
+        else:
+            # We return a list of all jobs filtered in an order according to user skills
+            jobs =  Jobs.objects.all()
+            user = request.user
+
+            if user.personal_details:
+                user_skills = user.personal_details.skills
+
+                if user_skills: 
+
+                    calculated_jobs =[]
+                    # Create a list to iterate and search all the words for matches with jobs
+                    user_skills_list = re.findall(r'\b\w+\b', user_skills.lower())
+                    print(user_skills_list)
+                    for job in jobs:
+                        job_skills_list = re.findall(r'\b\w+\b', job.requested_skills.lower())
+                        print(job_skills_list)
+                        match_count = sum(1 for skill in user_skills_list if skill in job_skills_list)
+                        
+                        # Does not add field to database it just for the calculated_jobs
+                        job.match_count = match_count
+                        calculated_jobs.append(job)
+                    # bring back the sorted list to jobs for serialization
+                    jobs = sorted(calculated_jobs , key=lambda job: job.match_count, reverse=True)
+                
+                        
+
+            # the final list shall be replaced with jobs to be serialized
+            serialized_jobs = [
+                {
+                "id":job.id,
+                "title": job.title,
+                "job_creator": {
+                        "id": job.job_creator.id,
+                        "username": job.job_creator.username,  # Or any field you prefer
+                        "email": job.job_creator.email,
+                    },
+                "company": job.company,
+                "location": job.location,
+                "created_at": job.created_at,
+                "job_type": job.job_type,
+                "requested_skills": job.requested_skills,
+                "requested_education": job.requested_education,
+                "general_information": job.general_information,
+                "applicants": [applicant.username for applicant in job.applicants.all()],  # Assuming applicants is a ManyToManyField
+                } 
+                for job in jobs
+            ]
+            return Response(serialized_jobs , status=status.HTTP_200_OK)
+       
+    # Creating a new job
+    def post(self , request ):
+        try:
+            # Get data from frontend
+            job_creator = request.user
+            title = request.data.get('job_title')
+            company = request.data.get('company')
+            requested_skill = request.data.get('requested_skills')
+            requested_education = request.data.get('requested_education')
+            location =  request.data.get('location')
+            general_info = request.data.get('general_information')
+            
+            job_type = request.data.get('job_type')
+            # ensure the job_type was accepted
+            if job_type not in [Jobs.FULL_TIME, Jobs.PART_TIME]:
+                return Response("Job type is not acsepted" , status= status.HTTP_404_NOT_FOUND)
+            
+            # creating a new Job offer
+            new_job = Jobs.objects.create(
+                job_creator=job_creator,
+                title=title,
+                company=company,
+                requested_skills=requested_skill,
+                requested_education=requested_education,
+                location=location,
+                general_information=general_info,
+                job_type=job_type
+            )
+            # add the job to users jobs
+            job_creator.my_jobs.add(new_job)
+
+            return Response({"job_id": new_job.id, "message": "Job offer created successfully"}, status=status.HTTP_201_CREATED)
+        except Jobs.DoesNotExist:
+            # if the job is not found
+            return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class User_options_jobs(APIView):
+    permission_classes = [IsAuthenticated]
+    # function to apply for a job {show interest}
+    def post(self , request):
+        try:
+            job_id = request.data.get("job_id")
+            print(job_id)
+            current_user = request.user
+            print(current_user.username)    
+            job = Jobs.objects.get(id=job_id)
+            print(job)
+            job.applicants.add(current_user)
+            return Response("job application was applied" , status=status.HTTP_200_OK)
+        except Jobs.DoesNotExist:
+            return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        except ExtendedUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    def delete(self , request):
+        try:
+            job_id = request.query_params.get("job_id")
+            job = Jobs.objects.get(id=job_id)
+            user = request.user
+            if job.job_creator.id == user.id :
+                job.delete()
+                return Response("job was deleted" , status=status.HTTP_200_OK)
+            return Response("user is not creator" , status=status.HTTP_404_NOT_FOUND)
+        except Jobs.DoesNotExist:
+            return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        except ExtendedUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        
