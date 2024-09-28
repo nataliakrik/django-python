@@ -1,6 +1,165 @@
 /* add more css code for the admin user list */
 .dashboard-container {
-    background-color: lightblue;
-    color: darkblue;
+
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin: 20px 5px;
+  border-radius: 5px;
+  width: auto; /* Adjust width as necessary */
+  word-wrap: break-word; /* Ensures long words break into the next line */
+  white-space: pre-wrap; /* Preserves whitespace and line breaks */
+  color: #000000;
+  background-color: #4447396c;
+}
+
+.dashboard-container h1{
+    flex: 1;
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #435443ec;
+    padding: 12px 15px;
+    margin: 20px auto;
+}
+
+.user{
+    flex: 1;
+    display: flex;
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+
+.user-bio{
+    flex: 1;
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: fit-content; /* Adjust width as necessary */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+.user-info{
+    flex: 1;
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+.users-articles{
+    flex: 3;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
     padding: 10px;
+    border: 2px outset #3739301f;
+    border-radius: 10px;
+    align-items: center;
+    scrollbar-color: #5a5f4ac0 #3a3b36c0;
+    scrollbar-width: thin;
+    scrollbar-gutter:inherit ;
+  
+    .article {
+      display: inline-block;
+    }
+}
+
+.article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 12px 15px;
+    margin: auto 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+
+
+.article:hover {transform: scale(1.05); /* Slight zoom effect on hover */
+    z-index: 10;
+}
+
+
+
+.article h3{
+    flex: 2;
+    margin: 20px;
+    padding: 10px;
+}
+
+.article a{
+    flex: 1;
+    color: #b7bcab;
+    text-decoration: none;
+}
+.article a:hover{
+    color: #444739;
+    text-decoration: none;
+}
+
+
+.article img{
+    align-self: center;
+    flex: 3;
+    width: 80%;
+}
+
+
+
+.users-jobs{
+    flex: 3;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    margin: auto 15px;
+    border: 2px outset #3739301f;
+    border-radius: 10px;
+    align-items: center;
+    scrollbar-color: #5a5f4ac0 #3a3b36c0;
+    scrollbar-width: thin;
+    scrollbar-gutter:inherit ;
+  
+    .job {
+      display: inline-block;
+    }
+}
+
+.job {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 12px 15px;
+    margin: 20px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
 }

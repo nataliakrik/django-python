@@ -113,9 +113,25 @@ class UserListView(APIView):
 
     def get(self, request):
         # getting all users of the user model 
-        users = ExtendedUser.objects.all().values('id', 'username', 'email' ,'phone_number')
+        users = ExtendedUser.objects.all()
+        serialized_user =[{
+            "id": user.id,
+            "username": user.username,
+            "email":user.email,
+            "phone_number":user.phone_number,
+            "personal_details": {
+                "experience": user.personal_details.experience if user.personal_details else "",
+                "education": user.personal_details.education if user.personal_details else "",
+                "skills": user.personal_details.skills if user.personal_details else "",
+            },
+            "my_articles": [{"id": article.id, "title": article.title,"image": request.build_absolute_uri(article.image.url) if article.image else None , "created_at": article.created_at} for article in user.my_articles.all()],
+            "liked_articles": [{"id": article.id, "title": article.title, "created_at": article.created_at} for article in user.liked_articles.all()],
+            "my_jobs": [{"id": job.id, "title": job.title, "created_at": job.created_at} for job in user.my_jobs.all()],
+            "follows": [{"id": follow.id, "username": follow.username, "email": follow.email} for follow in user.follows.all()],
+            "follows": [{"id": follower.id, "username": follower.username, "email": follower.email} for follower in user.follower.all()],
+        }for user in users]
         # sending response back
-        return Response(users)
+        return Response(serialized_user)
 
 # A list of all the users
 class UsernamesListView(APIView):
