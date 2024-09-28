@@ -84,7 +84,7 @@ function Messages() {
 
                 {/* Sidebar for listing users */}
                 <div className="sidebar">
-                    <h2>Users</h2>
+                    <h2><br />Users</h2>
                     <ul className="user-list">
                         {users.map(user => (
                             <li
@@ -127,7 +127,7 @@ function Messages() {
                             </div>
                         </div>
                     ) : (
-                        <p>Please select a user to start messaging.</p>
+                        <p><br /> Please select a user to start messaging.</p>
                     )}
                 </div>
             </div>
