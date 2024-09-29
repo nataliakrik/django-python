@@ -1,11 +1,20 @@
-import React from "react"; 
+import React, { useEffect } from "react"; 
 import { useParams, Link } from 'react-router-dom';
 import "./Profile.css"
 
 function OtherProfile() {
   // this is the id of the user u have to print the details about
-  const { id } = useParams(); 
+  const { id } = useParams();
+
   // get from api the public data from the other user
+  useEffect(() => {
+    const getPublicData = async () => {
+      // get method that gives the name and gets
+      // the public data of a user
+      const data = await fetch();
+    };
+    getPublicData();
+  });
   return (
     <div>
       <div className="top-bar">
@@ -31,9 +40,15 @@ function OtherProfile() {
           Settings
         </Link>
       </div>
-      <h1>Profile of other user</h1>
-      
+      <h1><br />Profile of {id}</h1>
+
       {/* print the public information of the user  */}
+      <div>
+        Professional Career: {} <br /><br />
+        Education: {} <br /><br />
+        Personal Skills and Hobbies: {} <br /><br />
+      </div>
+      
     </div>
   );
 }
