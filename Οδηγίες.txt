@@ -12,6 +12,8 @@ Django Rest Api
 
 (Ισως καποια επιπλεον εντολες εδω)
 -Το backend τρεχει με την εντολη: python manage.py runserver
+(αφου γινει activate το virtual environment
+με την εντολη source env/bin/activate)
 Το frontend τρεχει με την εντολη: npm run dev
 
 -Πραγματα που δεν υλοποιηθηκαν:
