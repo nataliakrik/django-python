@@ -10,7 +10,6 @@ Project Τεδι/Δημιουργεια LinkedIn:
 Django framework για backend, sqlite (python build in) database,
 Django Rest Api
 
-(Ισως καποια επιπλεον εντολες εδω)
 -Το backend τρεχει με την εντολη: python manage.py runserver
 (αφου γινει activate το virtual environment
 με την εντολη source env/bin/activate)
