@@ -278,27 +278,55 @@ class MessagesBetweenUsers(APIView):
     permission_classes = [IsAuthenticated]
     # Function to get a list if all the messages that were exchanged between logged in user and selected user
     def get(self, request, user_id):
-
-        try:
+        # retrurn messages between current user and user_id
+        if user_id > 0:
             other_user = ExtendedUser.objects.get(id=user_id)
-        except ExtendedUser.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            # List of all the messages either 
+            # from logged in user that were sent to selected user or 
+            # from selected user that were sent to logged in user
+            # ordered by the time they were created
+            messages = Message.objects.filter(
+                (Q(sender=request.user) & Q(receiver=other_user)) |
+                (Q(sender=other_user) & Q(receiver=request.user))
+            ).order_by('created_at')
+            
+            # Serialize messages and return the full list
+            serialized_messages = [
+                {"sender": msg.sender.username, "receiver": msg.receiver.username, "content": msg.content, "created_at": msg.created_at}
+                for msg in messages
+            ]
+            return Response(serialized_messages, status=status.HTTP_200_OK)
+        # Returns a list of users the current user has exchanged messages
+        else:
+            messages = Message.objects.filter(
+            (Q(sender=request.user) | Q(receiver=request.user))
+            ).order_by('created_at')
+            
+            # Create a list of the users that recieved or sent current user a message 
+            # i have to make sure the user is not already in the list
+            # Use a set to track unique user IDs
+            unique_users = set()
+            conversations = []
 
-        # List of all the messages either 
-        # from logged in user that were sent to selected user or 
-        # from selected user that were sent to logged in user
-        # ordered by the time they were created
-        messages = Message.objects.filter(
-            (Q(sender=request.user) & Q(receiver=other_user)) |
-            (Q(sender=other_user) & Q(receiver=request.user))
-        ).order_by('created_at')
-        
-        # Serialize messages and return the full list
-        serialized_messages = [
-            {"sender": msg.sender.username, "receiver": msg.receiver.username, "content": msg.content, "created_at": msg.created_at}
-            for msg in messages
-        ]
-        return Response(serialized_messages, status=status.HTTP_200_OK)
+            for message in messages:
+                # Determine the other user in the conversation
+                if message.sender.id == request.user.id:
+                    other_user = message.receiver
+                else:
+                    other_user = message.sender
+                # Add user to the list only if they haven't been added before
+                if other_user.id not in unique_users:
+                    unique_users.add(other_user.id)
+                    conversations.append(other_user)
+
+            serialized_conversations =[{
+                "id": user.id,
+                "username": user.username,
+                "profile_picture": request.build_absolute_uri(user.profile_picture.url) if user.profile_picture else None,
+            } for user in conversations]
+
+            return Response(serialized_conversations , status=status.HTTP_200_OK)
+
 
     # Function to create and save a new message from logged in user to the selected user
     def post(self, request, user_id):
@@ -768,7 +796,6 @@ class Job_offers(APIView):
 
     def get(self, request):
         user_id = request.query_params.get("user_id")  # Use query_params for GET request
-        print(user_id)
 
         if user_id:
             try:
@@ -812,7 +839,8 @@ class Job_offers(APIView):
                         job.match_count = match_count
                         calculated_jobs.append(job)
                     jobs = sorted(calculated_jobs, key=lambda job: job.match_count, reverse=True)
-
+            else :
+                jobs = Jobs.objects.all()
             # Serialize and return the final list of jobs
             serialized_jobs = [
                 {
@@ -841,7 +869,6 @@ class Job_offers(APIView):
                 }
                 for job in jobs
             ]
-            print(len(serialized_jobs))
             return Response(serialized_jobs, status=status.HTTP_200_OK)
 
         # Fallback in case no response is returned

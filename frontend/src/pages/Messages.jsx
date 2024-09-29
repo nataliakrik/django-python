@@ -1,34 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useRef} from 'react';
 import api from '../api';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import '../styles/messages.css';
 
 function Messages() {
+    const { id } = useParams(); // Get user_id from the URL parameters
     const [users, setUsers] = useState([]);  // List of users
     const [selectedUser, setSelectedUser] = useState(null);  // Track selected user
     const [messages, setMessages] = useState([]);  // Messages between users
     const [newMessage, setNewMessage] = useState('');  // Input for new message
     const token = localStorage.getItem('access');  // Token for API calls
+    const messagesEndRef = useRef(null);
 
-    // Fetch users to choose with who to send message
+    // Scroll to bottom every time messages change
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+    // Fetch users to choose with whom to send a message
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await api.get('/api/usernames/', {
+                console.log("fetch users");
+                const response = await api.get(`/api/messages/${0}/`, {  // Use 0 to get users conversations
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUsers(response.data);
+                
+                console.log(id);
+
+                // Check if user_id exists, then fetch messages for that user
+                if (id) {
+                    const user = response.data.find(user => user.id === parseInt(id));
+                    if (user){
+                        handleUserClick(user);  // Set the selected user and fetch messages
+                    }
+                }
             } catch (error) {
                 console.error('Error fetching users:', error);
             }
         };
         fetchUsers();
-    }, [token]);
+    }, [token, id]);  // Add user_id as a dependency to re-fetch if it changes
 
     // Fetch messages when a user is selected
-    const fetchMessages = async (user) => {
+    const fetchMessages = async (id) => {
         try {
-            const response = await api.get(`/messages/${user.id}/`, {
+            const response = await api.get(`/api/messages/${id}/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setMessages(response.data);  // Set the messages for the conversation
@@ -39,8 +60,9 @@ function Messages() {
 
     // Handle user selection
     const handleUserClick = (user) => {
-        setSelectedUser(user);
-        fetchMessages(user);  // Fetch the messages for the selected user
+        console.log("userClick");
+        setSelectedUser(user);  // Update selected user state
+        fetchMessages(user.id);  // Fetch the messages for the selected user
     };
 
     // Handle sending a new message
@@ -48,40 +70,29 @@ function Messages() {
         if (newMessage.trim() === '' || !selectedUser) return;
 
         try {
-            await api.post(`/messages/${selectedUser.id}/`, 
+            await api.post(`/api/messages/${selectedUser.id}/`, 
             { content: newMessage },
             { headers: { Authorization: `Bearer ${token}` } }
             );
             setNewMessage('');  // Clear input field
-            fetchMessages(selectedUser);  // Fetch updated messages
+            fetchMessages(selectedUser.id);  // Fetch updated messages
         } catch (error) {
             console.error('Error sending message:', error);
         }
     };
-    //////////////////////////////////////////////////
-    return (
-        <div >
-            {/* fetch from api:
-            -ονομα και εικονα χρηστων που βρισκονται στη λιστα
-            -μηνυματα ανοικτης συζητησης (επιλεγμενου προφιλ)
-            -(πρωτες λεξεις μηνυματων σε καθε ατομο) */}
 
-            {/* Το front να εμφανιζει:
-            -Μια λιστα (στα αριστερα) με τα profile,
-            με τα ατομα που υπαρχει ηδη συζητηση
-            -Στο κεντρο ανοικτη η συζητηση με το επιλεγμενο ατομο
-            απο τη λιστα */}
+    return (
+        <div className='home'>
             <div className="top-bar">          
-                    <Link to ="/home" className="top-bar-link">Home page</Link>
-                    <Link to ="/jobs" className="top-bar-link">Jobs</Link>
-                    <Link to ="/messages" className="top-bar-link">Messages</Link>
-                    <Link to ="/mynetwork" className="top-bar-link">My Network</Link>
-                    <Link to ="/notifications" className="top-bar-link">Notifications</Link>
-                    <Link to ="/profile" className="top-bar-link">Profile</Link>
-                    <Link to ="/settings" className="top-bar-link">Settings</Link>
+                <Link to="/home" className="top-bar-link">Home page</Link>
+                <Link to="/jobs" className="top-bar-link">Jobs</Link>
+                <Link to="/messages" className="top-bar-link">Messages</Link>
+                <Link to="/mynetwork" className="top-bar-link">My Network</Link>
+                <Link to="/notifications" className="top-bar-link">Notifications</Link>
+                <Link to="/profile" className="top-bar-link">Profile</Link>
+                <Link to="/settings" className="top-bar-link">Settings</Link>
             </div>
             <div className="messages-container">
-
                 {/* Sidebar for listing users */}
                 <div className="sidebar">
                     <h2><br />Users</h2>
@@ -114,6 +125,7 @@ function Messages() {
                                 ) : (
                                     <p>No messages yet.</p>
                                 )}
+                                <div ref={messagesEndRef} />
                             </div>
                             {/* Input field for sending new messages */}
                             <div className="message-input">
