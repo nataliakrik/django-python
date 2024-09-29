@@ -9,7 +9,7 @@ from .models import ExtendedUser
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExtendedUser
-        fields = ['id', 'username', 'email', 'phone_number', 'profile_picture', 'password']
+        fields = ['id', 'username', 'email', 'phone_number','first_name','last_name', 'profile_picture', 'password']
         extra_kwargs = {'password': {'write_only': True}}
     
     # Checks if the email already exists in the data-base

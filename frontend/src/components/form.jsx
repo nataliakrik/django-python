@@ -7,6 +7,8 @@ import "../styles/form.css";
 function Form({ route, method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [surname, setSurname] = useState("");
     const [role, setRole] = useState("professional"); // Default role
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -38,8 +40,10 @@ function Form({ route, method }) {
                 formData.append("username", username);
                 formData.append("password", password);
                 formData.append("email", email);
+                formData.append("first_name" , name)
+                formData.append("last_name", surname);
                 formData.append("phone_number", phone_number);
-                formData.append("role", role);
+                formData.append("role", 'professional');
                 if (img) {
                     // add the photo
                     formData.append("profile_picture", img); 
@@ -126,6 +130,22 @@ function Form({ route, method }) {
                         />
                         <input
                             className="form-input"
+                            type="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Name"
+                            required
+                        />
+                        <input
+                            className="form-input"
+                            type="surname"
+                            value={surname}
+                            onChange={(e) => setSurname(e.target.value)}
+                            placeholder="Surname"
+                            required
+                        />
+                        <input
+                            className="form-input"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -153,14 +173,18 @@ function Form({ route, method }) {
                         </div>
                     </>
                 )}
-                <select
-                    className="form-input"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                >
-                    <option value="professional">Professional</option>
-                    <option value="admin">Admin</option>
-                </select>
+                {isLogin && (
+
+                    <select
+                        className="form-input"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                    >
+                        <option value="professional">Professional</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                )}
+                
 
                 <button className="form-button" type="submit">{nameText}</button>
             </form>

@@ -33,8 +33,13 @@ function Messages() {
                 console.log(id);
 
                 // Check if user_id exists, then fetch messages for that user
-                if (id) {
-                    const user = response.data.find(user => user.id === parseInt(id));
+                if (id!="null") {
+                    // get user info
+                    const response = await api.get('api/usernameAndPhoto/', {
+                        headers: { Authorization: `Bearer ${token}`},
+                        params: { user_id: id },
+                    });
+                    const user = response.data;
                     if (user){
                         handleUserClick(user);  // Set the selected user and fetch messages
                     }
