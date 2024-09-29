@@ -7,11 +7,31 @@ function OtherProfile() {
   const { id } = useParams();
 
   // get from api the public data from the other user
+
+  // επιστρεφεται ενα object καπως ετσι:
+  // data = {
+  //   Carrier: value,
+  //   Education: value,
+  //   Skills_Hobbies: value,
+  // };
+
+  let data = {};
   useEffect(() => {
     const getPublicData = async () => {
-      // get method that gives the name and gets
-      // the public data of a user
-      const data = await fetch();
+    //   get method that gives the name and gets
+    //   the public data of a user
+    try{
+        const response = await fetch('api-endpoint',
+        {method: "GET",
+        headers: {"Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`}
+      });
+
+      data = await response.json();
+    }catch (error){
+      alert("error occured");
+    }
+
     };
     getPublicData();
   });
@@ -44,9 +64,9 @@ function OtherProfile() {
 
       {/* print the public information of the user  */}
       <div>
-        Professional Career: {} <br /><br />
-        Education: {} <br /><br />
-        Personal Skills and Hobbies: {} <br /><br />
+        Professional Career: {data.Career} <br /><br />
+        Education: {data.Education} <br /><br />
+        Personal Skills and Hobbies: {data.Skills_Hobbies} <br /><br />
       </div>
       
     </div>
