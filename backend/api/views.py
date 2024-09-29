@@ -4,7 +4,6 @@ from rest_framework import generics
 #from .serializers import UserSerializer, NoteSerializer
 from itertools import chain
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from .models import Note
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,7 +14,7 @@ import re
 
 # For new user model
 from .models import ExtendedUser , Message , Article , Comment , PersonalDetails , Notifications , Jobs
-from .serializers import CustomUserSerializer, NoteSerializer
+from .serializers import CustomUserSerializer
 from rest_framework.decorators import api_view
 from django.db.models import Q
 from django.conf import settings
@@ -78,30 +77,7 @@ class LoginView(APIView):
         return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-######################################################################
-# I will delete this classes soon we dont need them
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
-
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
-
-
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
 
 ## CLASSES ABOUT USERS
 #######################################################################################################
@@ -115,6 +91,8 @@ class UserListView(APIView):
         # getting all users of the user model 
         users = ExtendedUser.objects.all()
         serialized_user =[{
+            "first_name": user.first_name,
+            "last_name": user.last_name,
             "id": user.id,
             "username": user.username,
             "email":user.email,

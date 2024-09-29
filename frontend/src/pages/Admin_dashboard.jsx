@@ -128,6 +128,8 @@ function Admin_dashboard() {
                                     <h3>Users information</h3>
                                     {user.username}
                                     <br />
+                                    {user.first_name} {user.last_name}
+                                    <br />
                                     {user.email}
                                     <br />
                                     {user.phone_number}
