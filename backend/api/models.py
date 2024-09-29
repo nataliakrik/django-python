@@ -78,6 +78,8 @@ class Notifications(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # id of the object that this notification is about
     type_id = models.IntegerField()
+    # username of the user who caused the notification
+    username = models.TextField()
 
 # A class that will be contained by the extended user class
 class PersonalDetails(models.Model):

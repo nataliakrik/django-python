@@ -178,12 +178,12 @@ class UserInfo(APIView):
                 "education": user.personal_details.education if user.personal_details else "",
                 "skills": user.personal_details.skills if user.personal_details else "",
             },
-            "my_articles": [{"id": article.id, "title": article.title,"image": request.build_absolute_uri(article.image.url) if article.image else None , "created_at": article.created_at} for article in user.my_articles.all()],
+            "my_articles": [{"id": article.id, "title": article.title,"image": request.build_absolute_uri(article.image.url) if article.image else None , "likes": [{"id": like.id, "username": like.username} for like in article.likes.all()]} for article in user.my_articles.all()],
             "liked_articles": [{"id": article.id, "title": article.title, "created_at": article.created_at} for article in user.liked_articles.all()],
             "my_comments": [{"id": comment.id, "content": comment.content, "article_id": comment.article_id, "created_at": comment.created_at} for comment in user.my_comments.all()],
-            "my_jobs": [{"id": job.id, "title": job.title, "general_information": job.general_information} for job in user.my_jobs.all()],
+            "my_jobs": [{"id": job.id, "title": job.title, "general_information": job.general_information, "applicants": [{"id": applicant.id, "username": applicant.username,} for applicant in job.applicants.all()]} for job in user.my_jobs.all()],
             "follows": [{"id": follow.id, "username": follow.username, "email": follow.email} for follow in user.follows.all()],
-            "follows": [{"id": follower.id, "username": follower.username, "email": follower.email} for follower in user.follower.all()],
+            "followers": [{"id": follower.id, "username": follower.username, "email": follower.email} for follower in user.follower.all()],
         }
 
         # Send back information
@@ -364,7 +364,7 @@ class ConnectionView(APIView):
 
             # CREATE NOTIFICATION!!!! 
             # article = Article.objects.create(title=title, content=content, author=author, image=photo, public=public)
-            notification = Notifications.objects.create(type="follow_request" , type_id=user_id)
+            notification = Notifications.objects.create(type="follow_request" , type_id=user_id , username=user.username)
             # Add the notification to the user's list that we want to follow
             connection.notifications.add(notification)
             
@@ -411,7 +411,7 @@ class NotificationView(APIView):
             # notifications of the user
             notifications = user.notifications.all()
 
-            serialized_notifications = [{"id": notification.id, "type": notification.type, "type_id": notification.type_id, "created_at": notification.created_at} for notification in notifications]
+            serialized_notifications = [{"id": notification.id, "username": notification.username, "type": notification.type, "type_id": notification.type_id, "created_at": notification.created_at} for notification in notifications]
             # return the list of dictionaries
             return Response(serialized_notifications, status=status.HTTP_200_OK)
         
@@ -488,10 +488,7 @@ class NotificationView(APIView):
 
 #########################################################################################################
 """
-    I will change that to just public and every user has a list of all the shared with them articles 
-    that other users connected with them liked
-
-    i Will create a function that will return all articles that other users who are connected with current user liked
+i Will create a function that will return all articles that other users who are connected with current user liked
 """
 class Articles(APIView):
     # Everyone who is authenticated has access
@@ -638,7 +635,7 @@ class Likes_on_Articles(APIView):
             article_author = article.author
             # Except if the creator liked it
             if article_author.id != user_id :
-                notification = Notifications.objects.create(type="new_like" , type_id=user_id)
+                notification = Notifications.objects.create(type="new_like" , type_id=user_id, username=user.username)
                 article_author.notifications.add(notification)
 
             likes_list = article.likes.all()
@@ -727,7 +724,7 @@ class Commenting(APIView):
             print(f"author_id: {author_id} (type: {type(author_id)})")
             if article_author.id != author_id :
                 print(article_author.id , author_id)
-                notification = Notifications.objects.create(type="new_comment" , type_id=author_id)
+                notification = Notifications.objects.create(type="new_comment" , type_id=author_id , username= comment_author.username)
                 article_author.notifications.add(notification)
             
             comment_author.my_comments.add(new_comment)
@@ -901,6 +898,7 @@ class User_options_jobs(APIView):
             return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
         except ExtendedUser.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    # Function to delete a job only the user who created the job can delete it
     def delete(self , request):
         try:
             job_id = request.query_params.get("job_id")

@@ -1,6 +1,10 @@
-import { Link } from "react-router-dom";
+import React from "react"; 
+import { useParams, Link } from 'react-router-dom';
+import "./Profile.css"
 
 function OtherProfile() {
+  // this is the id of the user u have to print the details about
+  const { id } = useParams(); 
   // get from api the public data from the other user
   return (
     <div>
@@ -28,6 +32,7 @@ function OtherProfile() {
         </Link>
       </div>
       <h1>Profile of other user</h1>
+      
       {/* print the public information of the user  */}
     </div>
   );

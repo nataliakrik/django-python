@@ -1,13 +1,110 @@
+.home {
+    margin-top: 40px;
+}
+
+.big-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: auto; 
+}
+.profile-container {
+    flex: 1;
+    display: flex;
+}
+.left-container {
+    flex: 1;
+    padding: 12px 15px;
+    margin: 25px 10px;
+    margin-top: 80px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 300px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4ac0;
+}
+
+.left-container a{
+    color: #ffffffd1;
+    font-family: monospace;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.left-container a:hover{
+    color: #ffffff5f;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.left-container img{
+    border-radius: 35px;
+}
+
+
+/*//////////////display followers and followings/////////////////////*/
+
+.connection-container{
+    flex: 1;
+    justify-content: auto;
+    position: relative;
+    display: inline-block;
+    padding: 8px;
+}
+
+.hover-box {
+    display: none; /* Hidden by default */
+    position: absolute;
+    color: #333;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    top: 100%; /* Position below the likes text */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.connection-container:hover .hover-box {
+    display: block; /* Show the hover box on hover */
+}
+
+.hover-box a {
+    display: block;
+    padding: 5px 0;
+    text-decoration: none;
+    color: #333;
+}
+
+.hover-box a:hover {
+    color: #005bb5;
+    text-decoration: underline;
+}
+
+
+
+
+
+  
+/*//////////////////////////////////////////////////*/
+
 .Details-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center; 
-    margin: 20px auto;
-    max-width: 900px;
-    padding: 20px;
-    background-color: #f4f4f4; /* Light background for better contrast */
+    width: 600px;
+    margin: 25px auto;
+    padding: 20px;/* Light background for better contrast */
     border-radius: 10px; /* Rounded corners for a softer look */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 h1 {
@@ -19,10 +116,10 @@ h1 {
 form {
     width: 100%; /* Full width */
     max-width: 600px; /* Limit max width for form */
-    background-color: #ffffff; /* White background for the form */
+    background-color: #ffffff65; /* White background for the form */
     padding: 20px; /* Inner padding for the form */
     border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .form-align {
@@ -51,20 +148,20 @@ input[type="checkbox"] {
     margin-left: 10px; /* Space to the left of checkbox */
 }
 
-button {
+form button {
     padding: 12px;
-    background-color: #b87e7e;
+    background-color: #566859c2;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     width: 100%;
     max-width: 400px;
-    margin-top: 10px; /* Space above buttons */
+    margin-top: 5px; /* Space above buttons */
 }
 
-button:hover {
-    background-color: #936868;
+form button:hover {
+    background-color: #566859e4;
     transform: scale(1.01);
 }
 
@@ -81,3 +178,100 @@ button:hover {
         max-width: 100%; /* Allow buttons to take full width on small screens */
     }
 }
+
+.articles-container {     
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Spacing between items */
+    justify-content: space-evenly; /* Ensure even spacing */
+}
+
+.grid-item {
+    flex: 1 1 300px; /* Each item takes up a minimum of 300px */
+    max-width: 300px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    height: max-content;
+    padding: 25px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #f9f9f9bb;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.grid-item img {
+    width: 80%;
+}
+
+.grid-item:hover {
+    transform: scale(1.01); /* Slight zoom effect */
+    z-index: 10;
+}
+
+.grid-item h3 {
+    margin: 20px;
+    padding: 10px;
+}
+
+.grid-item a {
+    color: #5a5f4a;
+    text-decoration: none;
+}
+
+.grid-item a:hover {
+    color: #444739;
+    text-decoration: none;
+}
+
+.grid-item button {
+    background-color: #ffffff;
+    color: #494949;
+    width: fit-content;
+    margin: 15px;
+}
+
+.grid-item button:hover {
+    background-color: #f7f7f7;
+}
+
+/*//////////////////////////////////////////////*/
+
+.likes-container {
+    position: relative;
+    display: inline-block;
+    padding: 8px;
+}
+
+.hover-box {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    top: 100%; /* Position below the likes text */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.likes-container:hover .hover-box {
+    display: block; /* Show the hover box on hover */
+}
+
+.like-username {
+    display: block;
+    padding: 5px 0;
+    text-decoration: none;
+    color: #0073e6;
+}
+
+.like-username:hover {
+    color: #005bb5;
+    text-decoration: underline;
+}
+

@@ -60,31 +60,6 @@ function Home(){
     }, [token, user]);
 
 
-    //////////////////////////////////////////////////////////
-    // Delete article by author
-    
-    const deleteArticle = async (id) =>{
-        console.log(id)
-        try {
-            const response = await api.delete(`api/articles/${user.id}/`, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: { article_id: id }
-            });
-            console.log(response)
-        }catch{
-            console.error('Error when deleting article:', error);
-        }
-    }
-
-    const handleDelete = (id) => {
-        if(id){
-            deleteArticle(id)
-        }else {
-            console.error('no id')
-        }
-    }
-
-
 
     ////////////////////////////////////////////////////////////////////
     // liking articles
@@ -203,7 +178,6 @@ function Home(){
                                     </button>
                                 )}
                                 <Link to={`/article/${article.id}`}>Read more</Link> {/* Link to article page */}
-                                <button onClick={() => handleDelete(article.id)}>Delete</button>
                             </div>
                         ))
                     ) : (

@@ -1,20 +1,136 @@
+
 .notifications-page {
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    margin: 20px 5px;
+    border-radius: 5px;
+    width: auto; /* Adjust width as necessary */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #000000;
 }
 
-.connection-requests, .article-notifications {
-    margin: 20px 0;
+.connection-requests{
+    flex: 1;
+    padding: 12px 15px;
+    margin: 20px 10px;  
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 800px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4a81;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
+.article-notifications{
+    flex: 1;
+    padding: 12px 15px;
+    margin: 20px 10px;  
+    border-radius: 10px;
+    height: max-content;
+    width: auto; /* Adjust width as necessary */
+    max-width: 800px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
+    color: #ffffffd1;
+    background-color: #5a5f4a81;
 }
 
-li {
-    margin-bottom: 10px;
+.notifications-page h1{
+    flex: 1;
+    text-align: center;
+    color: rgb(59, 67, 53);
 }
 
-button {
-    margin-right: 10px;
+
+.notifications-page button {
+    padding: 15px;
+    background-color: #566859c2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 10px; /* Space above buttons */
+    font-size: 15px;
+
+}
+
+.notifications-page button:hover {
+    background-color: #566859e4;
+    transform: scale(1.01);
+}
+/*///////////////   CONNECTION  REQUESTS   /////////////////*/
+
+.connection-requests li{
+    display: flex;
+    padding: 8px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */   
+    border-radius: 5px;
+    cursor: pointer;
+    width: 700px;
+    margin: 10px auto; /* Space above buttons */
+}
+
+.connection-requests ul p{
+    flex: 2;
+}
+
+.connection-requests ul button{
+    flex: 3;
+}
+
+.connection-requests button{
+    padding: 12px;
+    background-color: #566859c2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 10px; /* Space above buttons */
+}
+
+.connection-requests button:hover {
+    background-color: #566859e4;
+    transform: scale(1.01);
+}
+
+
+/*///////////////   article-notifications   /////////////////*/
+
+.article-notifications li{
+    display: flex;
+    padding: 8px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */   
+    border-radius: 5px;
+    cursor: pointer;
+    width: 600px;
+    margin: 10px auto; /* Space above buttons */
+}
+.article-notifications ul p{
+    flex: 2;
+}
+
+.article-notifications ul button{
+    flex: 3;
+}
+
+.article-notifications button{
+    padding: 12px;
+    background-color: #566859c2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 10px; /* Space above buttons */
+}
+
+.article-notifications button:hover {
+    background-color: #566859e4;
+    transform: scale(1.01);
 }

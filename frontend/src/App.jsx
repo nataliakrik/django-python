@@ -24,7 +24,7 @@ import PostJob from "./pages/PostJob";
 
 function Logout() {
   localStorage.clear()
-  return <Navigate to="/login" />
+  return <Navigate to="/Welcome" />
 }
 
 function RegisterAndLogout() {
@@ -50,7 +50,7 @@ function App() {
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>}/>
         <Route path="/mynetwork" element={<ProtectedRoute><MyNetwork /></ProtectedRoute>}/>
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>}/>
-        <Route path="/otherprofile" element={<ProtectedRoute><OtherProfile /></ProtectedRoute>}/>
+        <Route path="/otherprofile/:id" element={<ProtectedRoute><OtherProfile /></ProtectedRoute>}/>
         <Route path="/profile" element={<ProtectedRoute><Me /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         <Route path="/register" element={<RegisterAndLogout />} />

@@ -1,9 +1,71 @@
+.job-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    margin: 20px 5px;
+    border-radius: 5px;
+    width: auto; /* Adjust width as necessary */
+    color: #000000;
+}
+.job-list h1{
+    flex: 1;
+    text-align: center;
+    color: rgb(59, 67, 53);
+}
+.post-job {
+    flex: 1;
+    padding: 12px 15px;
+    margin: 20px 10px;  
+    border-radius: 10px;
+    background-color: #5a5f4a5c;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.post-job a{
+    color: rgb(59, 67, 53);
+    font-size: 15px;
+    text-decoration: none;
+}
 
 .Job_frame{
-    display: flex;
-    background-color: #d1cdcd;
+    flex: 1;
+    padding: 12px 15px;
+    margin: 20px 10px;  
+    border-radius: 10px;
+    color: #ffffffd1;
+    background-color: #5a5f4a81;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
     width: 700px;
     overflow-wrap: break-word;
+    max-width: 800px; /* Optional: set a maximum width */
+    word-wrap: break-word; /* Ensures long words break into the next line */
+    white-space: pre-wrap; /* Preserves whitespace and line breaks */
     margin: auto;
 }
 
+.Job_frame h2 ,.Job_frame  h3 ,.Job_frame h4 ,.Job_frame h5{
+    flex: 1;
+    text-align: center;
+    color: rgb(59, 67, 53);
+}
+
+.Job_frame button {
+    padding: 15px;
+    background-color: #566859c2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 15px 10px; /* Space above buttons */
+    font-size: 15px;
+}
+
+.Job_frame button:hover {
+    background-color: #566859e4;
+    transform: scale(1.01);
+}
