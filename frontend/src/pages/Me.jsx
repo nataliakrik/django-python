@@ -375,7 +375,7 @@ function Me() {
                                                 to={`/otherProfile/${user.id}`} // Link to the user's profile page
                                                 className="like-username"
                                             >
-                                                @{user.username} liked
+                                                @{user.username} applied
                                             </Link>
                                         ))}
                                     </div>

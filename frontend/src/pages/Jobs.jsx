@@ -77,12 +77,12 @@ function Jobs() {
 				</Link>
 			</div>
 			<div className="job-list">
-				<h1 className="center">Jobs</h1>
 				<div className="post-job">
 					<Link to="/postjob">
 						<h3>Post a job</h3>
 					</Link> 
 				</div>
+				<h1 className="center">Job offers for you</h1>
 				{/* Display job listings */}
 				{jobs.map((job, index) => (
 					<div key={job.id || index}>
