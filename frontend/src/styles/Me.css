@@ -226,10 +226,15 @@ form button:hover {
 }
 
 .grid-item button {
+    
+    padding: 10px 20px;
     background-color: #ffffff;
     color: #494949;
     width: fit-content;
     margin: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .grid-item button:hover {

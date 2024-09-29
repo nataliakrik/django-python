@@ -76,9 +76,23 @@
     margin: 10px auto; /* Space above buttons */
 }
 
+
+
 .connection-requests ul p{
     flex: 2;
 }
+.connection-requests ul a{
+    display: block;
+    padding: 5px 0;
+    text-decoration: none;
+    color: #333;
+}
+
+.connection-requests ul a:hover {
+    color: #005bb5;
+    text-decoration: underline;
+}
+
 
 .connection-requests ul button{
     flex: 3;

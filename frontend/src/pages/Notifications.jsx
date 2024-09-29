@@ -10,7 +10,6 @@ function Notifications() {
 	const [error, setError] = useState(null);
 	const [refresh, setRefresh] = useState(false);
 	const token = localStorage.getItem("access"); // Token for API calls
-	const [username , setUsername] = useState(null);
 
 	useEffect(() => {
 		const fetchNotifications = async () => {
@@ -30,28 +29,7 @@ function Notifications() {
 		fetchNotifications();
 	}, [token, refresh]);
 
-	// get username 
-	// Get users information
-    useEffect(() => {
-        const fetch_User = async (user_id) => {
-        try {
-            const response = await api.get('api/usernameAndPhoto/', {
-            	headers: { Authorization: `Bearer ${token}`},
-				params: { user_id: user_id },
-            });
 
-            // saving the response data
-            const usersData = response.data;
-            setUsername(usersData.username);
-            console.log(user);
-        } catch (error) {
-            console.error('Error fetching users:', error);  // Log error
-        }
-        };
-
-        fetch_User();  // Call the function 
-
-    }, [token]);
 
 	const handleDecision = async (notification, decision) => {
 		try {
@@ -128,7 +106,7 @@ return (
 					<ul>
 						{notifications.filter((notif) => notif.type === "follow_request").map((notification) => (
 							<li key={notification.id}>
-								<p><Link to={`/otherprofile/${notification.username}`}>{notification.username}</Link> wants to follow you</p>
+								<p><Link to={`/otherprofile/${notification.type_id}`}>{notification.username}</Link> wants to follow you</p>
 								<button
 									onClick={() => handleDecision(notification, "accept")}
 									>
