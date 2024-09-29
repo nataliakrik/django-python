@@ -53,7 +53,7 @@ function OtherProfile() {
 				<Link to="/jobs" className="top-bar-link">
 					Jobs
 				</Link>
-				<Link to="/messages" className="top-bar-link">
+				<Link to="/messages/null" className="top-bar-link">
 					Messages
 				</Link>
 				<Link to="/mynetwork" className="top-bar-link">
@@ -125,6 +125,7 @@ function OtherProfile() {
 							</li>
 						)}
 						</ul>
+                        <Link to={`/messages/${user.id}`}> Start Conversation with {user.username}</Link> <br /> <br />
 					</div>
 					{/* print the public information of the user  */}
 					<div className="personal-details">

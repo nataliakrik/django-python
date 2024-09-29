@@ -150,7 +150,7 @@ function MyNetwork() {
         <Link to="/jobs" className="top-bar-link">
           Jobs
         </Link>
-        <Link to="/messages" className="top-bar-link">
+        <Link to="/messages/null" className="top-bar-link">
           Messages
         </Link>
         <Link to="/mynetwork" className="top-bar-link">

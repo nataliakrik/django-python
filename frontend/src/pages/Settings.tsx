@@ -50,7 +50,7 @@ function Settings() {
       <div className="top-bar">          
         <Link to="/home" className="top-bar-link">Home page</Link>
         <Link to="/jobs" className="top-bar-link">Jobs</Link>
-        <Link to="/messages" className="top-bar-link">Messages</Link>
+        <Link to="/messages/null" className="top-bar-link">Messages</Link>
         <Link to="/mynetwork" className="top-bar-link">My Network</Link>
         <Link to="/notifications" className="top-bar-link">Notifications</Link>
         <Link to="/profile" className="top-bar-link">Profile</Link>

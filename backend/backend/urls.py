@@ -15,7 +15,7 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/admin/users/', UserListView.as_view(), name='user-list'),
     path('api/usernames/', UsernamesListView.as_view(), name='username-list'),
-    path('messages/<int:user_id>/', MessagesBetweenUsers.as_view(), name='messages_between_users'),
+    path('api/messages/<int:user_id>/', MessagesBetweenUsers.as_view(), name='messages_between_users'),
     path('api/usernameAndPhoto/', UserInfo.as_view(), name='username-photo'),
     path('api/connections/<int:user_id>/', ConnectionView.as_view()),
     path("api/articles/<int:user_id>/", Articles.as_view(), name='articles_list'),

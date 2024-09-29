@@ -47,7 +47,7 @@ function App() {
         {/* Other Pages */}
         <Route path="/admin_dashboard" element={<ProtectedRoute><Admin_dashboard /></ProtectedRoute>}/>
         <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>}/>
-        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>}/>
+        <Route path="/messages/:id" element={<ProtectedRoute><Messages /></ProtectedRoute>}/>
         <Route path="/mynetwork" element={<ProtectedRoute><MyNetwork /></ProtectedRoute>}/>
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>}/>
         <Route path="/otherprofile/:id" element={<ProtectedRoute><OtherProfile /></ProtectedRoute>}/>
