@@ -128,7 +128,7 @@ return (
 					<ul>
 						{notifications.filter((notif) => notif.type === "follow_request").map((notification) => (
 							<li key={notification.id}>
-								<p>{notification.username} wants to follow you</p>
+								<p><Link to={`/otherprofile/${notification.username}`}>{notification.username}</Link> wants to follow you</p>
 								<button
 									onClick={() => handleDecision(notification, "accept")}
 									>
