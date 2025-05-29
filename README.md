@@ -3,8 +3,8 @@
 
 ## 📌 Team Members
 
-- **Ναταλία Κρικέλλη**
-- **Σωκράτης Παπαργύρης** 
+- **Ναταλία Κρικέλλη** [https://github.com/nataliakrik]
+- **Σωκράτης Παπαργύρης** [https://github.com/soc9999] 
 
 ---
 
