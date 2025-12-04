@@ -120,12 +120,3 @@ project-root/
 └── requirements.txt    # Python dependencies
 ```
 
----
-
-## 📢 Final Notes
-
-This project was built as a university assignment with the goal of replicating core features of LinkedIn using modern web technologies and best practices in full-stack development.
-
-> Thank you for checking out our work! 💼🚀
-
----
