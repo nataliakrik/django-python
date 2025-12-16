@@ -103,7 +103,7 @@ This is a **LinkedIn-inspired** full-stack web application designed as part of a
 
 ---
 
-## 📂 Repository Structure (Suggested)
+## 📂 Repository Structure
 
 ```
 project-root/
